@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Domínio Nort">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icone.png">
+<title>DOMÍNIO NORT — Protocolo Completo v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:#000;--deep:#080808;--charcoal:#111;--steel:#1a1a1a;--ash:#252525;
+  --smoke:#3a3a3a;--grey:#b0b0b0;--light:#d8d8d8;--gold:#d4af37;--gold-dim:#a07d1a;
+  --gold-glow:#f0c84a;--blood:#7a0000;--crimson:#cc2200;--green:#2a5a2a;
+  --green-b:#4aff6a;--purple:#7744cc;--blue:#4466ff;--white:#f0f0f0;
+  --font-d:'Bebas Neue',sans-serif;--font-m:'Share Tech Mono',monospace;
+  --font-b:'Crimson Text',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;background:var(--black);color:var(--grey);font-family:var(--font-m);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:9999;}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;background:#000;z-index:99999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .8s ease;}
+#splash.hidden{opacity:0;pointer-events:none;}
+.splash-img{width:min(85vw,480px);height:auto;object-fit:contain;
+  filter:brightness(.85) contrast(1.05);}
+.splash-bar-wrap{width:min(60vw,320px);height:2px;background:rgba(255,255,255,.08);
+  margin-top:36px;border-radius:1px;overflow:hidden;}
+.splash-bar{height:100%;width:0%;background:var(--gold);
+  transition:width .1s linear;border-radius:1px;}
+.splash-label{font-family:var(--font-d);font-size:10px;letter-spacing:7px;
+  color:var(--smoke);margin-top:14px;text-transform:uppercase;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;animation:fadeIn .5s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ MENU ══ */
+#s-menu{flex-direction:column;align-items:center;justify-content:center;position:relative;
+  background-image:url('./fundo.jpg');background-size:cover;background-position:center;
+  background-attachment:fixed;}
+#s-menu::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.75);z-index:0;}
+.menu-bg{position:absolute;font-family:var(--font-d);font-size:clamp(100px,22vw,280px);
+  color:rgba(212,175,55,.04);letter-spacing:-8px;user-select:none;pointer-events:none;
+  top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;z-index:1;}
+.logo{text-align:center;margin-bottom:56px;position:relative;z-index:2;}
+.logo-title{font-family:var(--font-d);font-size:clamp(52px,9vw,96px);color:var(--gold);
+  letter-spacing:10px;line-height:.9;text-shadow:0 0 50px rgba(212,175,55,.5);
+  animation:glow 4s ease-in-out infinite;}
+@keyframes glow{0%,100%{text-shadow:0 0 40px rgba(212,175,55,.4)}50%{text-shadow:0 0 80px rgba(212,175,55,.7)}}
+.logo-sub{font-size:10px;letter-spacing:7px;color:var(--grey);margin-top:10px;}
+.logo-line{width:180px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);margin:18px auto;}
+.logo-chap{font-family:var(--font-b);font-style:italic;font-size:15px;color:var(--grey);letter-spacing:2px;}
+.menu-opts{display:flex;flex-direction:column;gap:3px;width:300px;position:relative;z-index:2;}
+.mbtn{background:rgba(0,0,0,.6);border:none;border-left:2px solid var(--smoke);padding:13px 22px;
+  font-family:var(--font-m);font-size:12px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--grey);cursor:pointer;text-align:left;transition:all .2s ease;position:relative;overflow:hidden;}
+.mbtn::before{content:'';position:absolute;left:0;top:0;width:0;height:100%;
+  background:rgba(212,175,55,.08);transition:width .3s ease;}
+.mbtn:hover::before{width:100%;}
+.mbtn:hover{border-left-color:var(--gold);color:var(--gold);padding-left:30px;}
+.mbtn.danger:hover{border-left-color:var(--crimson);color:var(--crimson);}
+.mbtn:disabled{opacity:.25;cursor:not-allowed;}
+.mbtn .px{color:var(--gold-dim);margin-right:10px;font-size:9px;}
+.mbtn.danger .px{color:var(--blood);}
+.menu-ver{position:fixed;bottom:24px;right:32px;font-size:9px;color:var(--grey);letter-spacing:3px;z-index:2;}
+.menu-credit{position:fixed;bottom:24px;left:120px;font-size:8px;color:var(--smoke);letter-spacing:2px;z-index:2;font-family:var(--font-b);font-style:italic;}
+
+/* ══ CREATE ══ */
+#s-create{flex-direction:column;align-items:center;padding:50px 20px 60px;
+  background:linear-gradient(180deg,rgba(212,175,55,.025) 0%,transparent 35%),var(--black);}
+.cr-hdr{text-align:center;margin-bottom:44px;}
+.cr-hdr h1{font-family:var(--font-d);font-size:38px;letter-spacing:8px;color:var(--gold);margin-bottom:6px;}
+.cr-hdr p{font-family:var(--font-b);font-style:italic;color:var(--smoke);font-size:13px;letter-spacing:2px;}
+.cr-sec{width:100%;max-width:780px;margin-bottom:36px;}
+.sec-lbl{font-size:9px;letter-spacing:6px;color:var(--gold-dim);text-transform:uppercase;
+  border-bottom:1px solid var(--steel);padding-bottom:7px;margin-bottom:18px;}
+.vinput-wrap{display:flex;align-items:center;gap:10px;background:var(--charcoal);border:1px solid var(--steel);padding:11px 16px;transition:border-color .2s;}
+.vinput-wrap:focus-within{border-color:var(--gold-dim);}
+.vpfx{color:var(--gold-dim);font-size:11px;white-space:nowrap;}
+.vinput{background:none;border:none;outline:none;font-family:var(--font-m);font-size:13px;color:var(--white);letter-spacing:3px;text-transform:uppercase;width:100%;}
+.vinput::placeholder{color:var(--smoke);}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+.ocard{background:var(--charcoal);border:1px solid var(--steel);padding:22px 18px;cursor:pointer;
+  transition:all .25s ease;position:relative;overflow:hidden;}
+.ocard::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);transition:left .4s ease;}
+.ocard:hover::after,.ocard.sel::after{left:100%;}
+.ocard:hover,.ocard.sel{border-color:var(--gold-dim);background:var(--steel);}
+.ocard.sel::before{content:'✓';position:absolute;top:10px;right:12px;color:var(--gold);font-size:13px;}
+.oname{font-family:var(--font-d);font-size:21px;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
+.odesc{font-family:var(--font-b);font-size:13px;color:var(--grey);line-height:1.6;margin-bottom:12px;}
+.ostats{display:flex;flex-direction:column;gap:3px;}
+.ostat{font-size:9px;letter-spacing:2px;color:var(--smoke);text-transform:uppercase;}
+.ostat span{color:var(--gold-dim);font-weight:bold;}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px;}
+.rcard{background:var(--charcoal);border:1px solid var(--steel);padding:14px 16px;cursor:pointer;transition:all .2s ease;}
+.rcard:hover,.rcard.sel{border-color:var(--gold-dim);background:var(--steel);}
+.rcard.sel::after{content:'■';float:right;color:var(--gold);font-size:8px;margin-top:4px;}
+.rname{font-family:var(--font-d);font-size:17px;letter-spacing:3px;color:var(--grey);margin-bottom:3px;}
+.rdiff{font-size:8px;letter-spacing:3px;text-transform:uppercase;}
+.rdiff.n{color:var(--green-b)}.rdiff.h{color:#f0a030}.rdiff.hc{color:var(--crimson)}
+.rdesc{font-size:10px;color:var(--smoke);margin-top:5px;letter-spacing:.5px;}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px;}
+.fcard{background:var(--charcoal);border:1px solid var(--steel);padding:14px 16px;cursor:pointer;transition:all .2s ease;}
+.fcard:hover,.fcard.sel{border-color:var(--gold-dim);background:var(--steel);}
+.fcard.sel::after{content:'■';float:right;color:var(--gold);font-size:8px;margin-top:4px;}
+.fname{font-family:var(--font-d);font-size:16px;letter-spacing:3px;color:var(--grey);margin-bottom:3px;}
+.fdesc{font-size:10px;color:var(--smoke);margin-top:4px;letter-spacing:.5px;line-height:1.5;}
+.cbtn{display:block;width:100%;max-width:780px;background:transparent;border:1px solid var(--gold-dim);
+  padding:16px;font-family:var(--font-d);font-size:19px;letter-spacing:8px;color:var(--gold);
+  cursor:pointer;transition:all .25s ease;margin-top:6px;}
+.cbtn:hover{background:rgba(212,175,55,.07);border-color:var(--gold);box-shadow:0 0 25px rgba(212,175,55,.1);}
+.cbtn:disabled{opacity:.25;cursor:not-allowed;}
+
+/* ══ GAME ══ */
+#s-game{flex-direction:column;background:var(--black);}
+.hud{background:var(--charcoal);border-bottom:1px solid var(--steel);display:flex;align-items:stretch;position:sticky;top:0;z-index:200;}
+.hud-brand{padding:10px 20px;border-right:1px solid var(--steel);display:flex;flex-direction:column;justify-content:center;min-width:160px;}
+.hud-brand-name{font-family:var(--font-d);font-size:16px;letter-spacing:4px;color:var(--gold);}
+.hud-brand-sub{font-size:8px;letter-spacing:3px;color:var(--smoke);margin-top:2px;}
+.hud-stats{display:flex;flex:1;align-items:stretch;overflow-x:auto;}
+.hstat{flex:1;min-width:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 6px;border-right:1px solid var(--steel);position:relative;transition:background .3s;}
+.hstat-lbl{font-size:7px;letter-spacing:3px;color:var(--smoke);text-transform:uppercase;margin-bottom:3px;}
+.hstat-val{font-family:var(--font-d);font-size:19px;letter-spacing:1px;transition:color .5s;}
+.hstat-bar{position:absolute;bottom:0;left:0;height:2px;transition:width .6s ease,background .5s;}
+.hstat.heat .hstat-bar{background:var(--crimson);}
+.hstat.resp .hstat-bar{background:var(--gold);}
+.hstat.temor .hstat-bar{background:var(--purple);}
+.hstat.sold .hstat-bar{background:var(--green-b);}
+.hstat.dsujo .hstat-bar{background:var(--grey);}
+.hstat.dlimpo .hstat-bar{background:var(--gold);}
+.hud-right{padding:10px 18px;display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:2px;color:var(--smoke);border-left:1px solid var(--steel);}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green-b);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+
+/* GAME BODY */
+.gbody{display:grid;grid-template-columns:1fr 290px;flex:1;min-height:calc(100vh - 60px);}
+@media(max-width:700px){.gbody{grid-template-columns:1fr}.gside{display:none!important;}}
+.gmain{display:flex;flex-direction:column;border-right:1px solid var(--steel);}
+.gloc{padding:12px 20px;border-bottom:1px solid var(--steel);display:flex;align-items:center;gap:14px;}
+.gloc-icon{font-size:16px;opacity:.5;}
+.gloc-name{font-family:var(--font-d);font-size:14px;letter-spacing:4px;color:var(--grey);}
+.gloc-status{margin-left:auto;font-size:8px;letter-spacing:3px;color:var(--smoke);padding:3px 9px;border:1px solid var(--steel);}
+
+/* SCENE IMAGE */
+.scene-img{width:100%;height:180px;object-fit:cover;object-position:center;display:none;
+  filter:brightness(.7) contrast(1.1) grayscale(.3);border-bottom:1px solid var(--steel);}
+.scene-img.visible{display:block;animation:fadeIn .6s ease;}
+
+/* LOG */
+.dlog{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 310px);}
+.dlog::-webkit-scrollbar{width:3px;}
+.dlog::-webkit-scrollbar-thumb{background:var(--smoke);}
+
+/* MESSAGES */
+.msg{display:flex;flex-direction:column;gap:5px;animation:min .35s ease;max-width:88%;}
+@keyframes min{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.msg.player{align-self:flex-end;align-items:flex-end;animation:minr .35s ease;}
+@keyframes minr{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.msg.narrator{max-width:100%;align-self:stretch;}
+.msg-sender{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--smoke);padding:0 3px;}
+.msg-bubble{padding:11px 14px;font-family:var(--font-b);font-size:14px;line-height:1.65;}
+.msg.allied .msg-bubble{background:var(--charcoal);border:1px solid var(--green);border-left:3px solid var(--green-b);color:var(--light);}
+.msg.narrator .msg-bubble{background:rgba(212,175,55,.03);border:1px solid rgba(212,175,55,.12);border-left:3px solid var(--gold-dim);color:var(--grey);font-style:italic;}
+.msg.enemy .msg-bubble{background:rgba(120,0,0,.1);border:1px solid rgba(204,34,0,.25);border-left:3px solid var(--crimson);color:var(--light);}
+.msg.system .msg-bubble{background:rgba(68,102,255,.06);border:1px solid rgba(68,102,255,.2);border-left:3px solid var(--blue);color:var(--grey);font-size:12px;letter-spacing:.5px;font-family:var(--font-m);}
+.msg.player .msg-bubble{background:var(--steel);border:1px solid var(--smoke);border-right:3px solid var(--gold);color:var(--white);text-align:right;}
+.msg.player .msg-sender{color:var(--gold-dim);}
+
+/* TYPEWRITER CURSOR */
+.tw-cursor{display:inline-block;width:2px;height:1em;background:var(--gold-dim);margin-left:2px;vertical-align:middle;animation:twblink .7s step-end infinite;}
+@keyframes twblink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* EFFECT TAGS */
+.etag{display:inline-block;font-size:8px;font-family:var(--font-m);letter-spacing:2px;padding:2px 7px;margin:3px 2px 0;border:1px solid;text-transform:uppercase;animation:tpop .3s ease;}
+@keyframes tpop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.etag.up{color:var(--green-b);border-color:rgba(74,255,106,.3);}
+.etag.dn{color:var(--crimson);border-color:rgba(204,34,0,.3);}
+.etag.nt{color:var(--gold-dim);border-color:rgba(212,175,55,.3);}
+
+/* MSG SEP */
+.msep{height:1px;background:linear-gradient(90deg,transparent,var(--steel),transparent);margin:6px 0;flex-shrink:0;}
+.msep.gold{background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);}
+
+/* CHOICE */
+.choice-area{padding:16px 20px;border-top:1px solid var(--steel);background:var(--charcoal);}
+.choice-prompt{font-size:9px;letter-spacing:4px;color:var(--smoke);text-transform:uppercase;margin-bottom:12px;}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.cbtn2{background:var(--steel);border:1px solid var(--smoke);padding:11px 14px;cursor:pointer;
+  font-family:var(--font-m);font-size:10px;letter-spacing:1px;text-align:left;transition:all .2s ease;position:relative;overflow:hidden;}
+.cbtn2::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;}
+.cbtn2:hover::before{opacity:1;}
+.ctag{display:block;font-size:8px;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;font-weight:bold;}
+.ctxt{color:var(--grey);font-size:10px;line-height:1.5;letter-spacing:.3px;}
+.cbtn2.ag{border-color:rgba(204,34,0,.35)}.cbtn2.ag::before{background:rgba(204,34,0,.06)}.cbtn2.ag:hover{border-color:var(--crimson)}.cbtn2.ag .ctag{color:var(--crimson)}
+.cbtn2.dp{border-color:rgba(212,175,55,.3)}.cbtn2.dp::before{background:rgba(212,175,55,.05)}.cbtn2.dp:hover{border-color:var(--gold-dim)}.cbtn2.dp .ctag{color:var(--gold)}
+.cbtn2.es{border-color:rgba(68,102,255,.3)}.cbtn2.es::before{background:rgba(68,102,255,.05)}.cbtn2.es:hover{border-color:var(--blue)}.cbtn2.es .ctag{color:var(--blue)}
+.cbtn2.ca{border-color:rgba(180,180,180,.18)}.cbtn2.ca::before{background:rgba(180,180,180,.04)}.cbtn2.ca:hover{border-color:var(--grey)}.cbtn2.ca .ctag{color:var(--grey)}
+.cbtn2:disabled{opacity:.25;cursor:not-allowed;}
+.cbtn2.full{grid-column:span 2;}
+
+/* SIDEBAR */
+.gside{background:var(--charcoal);display:flex;flex-direction:column;overflow-y:auto;}
+.gside::-webkit-scrollbar{width:3px;}
+.gside::-webkit-scrollbar-thumb{background:var(--smoke);}
+.ss{padding:16px;border-bottom:1px solid var(--steel);}
+.ss-ttl{font-size:8px;letter-spacing:5px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:12px;}
+.tcard{background:var(--steel);border:1px solid var(--ash);padding:11px;margin-bottom:7px;cursor:pointer;transition:border-color .2s;}
+.tcard:hover{border-color:var(--green);}
+.tname{font-family:var(--font-d);font-size:15px;letter-spacing:3px;color:var(--grey);}
+.trole{font-size:8px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin:2px 0 7px;}
+.tquote{font-family:var(--font-b);font-style:italic;font-size:11px;color:var(--smoke);line-height:1.5;border-left:2px solid var(--green);padding-left:7px;}
+.wrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--steel);}
+.wrow:last-child{border-bottom:none;}
+.wlbl{font-size:8px;letter-spacing:2px;color:var(--smoke);text-transform:uppercase;}
+.wval{font-family:var(--font-d);font-size:16px;letter-spacing:1px;}
+.wval.s{color:var(--grey)}.wval.l{color:var(--gold)}
+.news{padding:12px 16px;border-bottom:1px solid var(--steel);background:rgba(120,0,0,.07);}
+.news-lbl{font-size:7px;letter-spacing:4px;color:var(--blood);text-transform:uppercase;margin-bottom:5px;}
+.news-txt{font-family:var(--font-b);font-style:italic;font-size:11px;color:var(--grey);line-height:1.5;}
+.rival-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--steel);}
+.rival-row:last-child{border-bottom:none;}
+.rival-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.rival-dot.paz{background:#444;}
+.rival-dot.tregua{background:var(--gold-dim);}
+.rival-dot.alianca{background:var(--green-b);}
+.rival-dot.guerra{background:var(--crimson);animation:blink 1s ease-in-out infinite;}
+.rival-name{font-size:10px;letter-spacing:1px;color:var(--grey);flex:1;}
+.rival-status{font-size:8px;letter-spacing:2px;color:var(--smoke);text-transform:uppercase;}
+.inv-item{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--steel);font-size:10px;}
+.inv-item:last-child{border-bottom:none;}
+.inv-name{color:var(--grey);letter-spacing:1px;}
+.inv-qty{color:var(--gold-dim);font-family:var(--font-d);font-size:14px;}
+.chronicle-entry{font-family:var(--font-b);font-size:11px;color:var(--smoke);line-height:1.6;padding:6px 0;border-bottom:1px solid var(--steel);}
+.chronicle-entry:last-child{border-bottom:none;}
+.chronicle-ts{font-family:var(--font-m);font-size:8px;color:var(--gold-dim);letter-spacing:2px;margin-bottom:3px;}
+
+/* MARKET BUTTON */
+.mkt-btn{display:block;width:100%;background:transparent;border:1px solid rgba(212,175,55,.3);
+  padding:10px 14px;font-family:var(--font-m);font-size:9px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold-dim);cursor:pointer;transition:all .2s;text-align:left;margin-top:4px;}
+.mkt-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.05);}
+.mkt-item{display:flex;flex-direction:column;gap:4px;padding:12px;background:var(--steel);border:1px solid var(--ash);margin-bottom:6px;}
+.mkt-item-name{font-family:var(--font-d);font-size:17px;letter-spacing:3px;color:var(--gold);}
+.mkt-item-desc{font-size:9px;color:var(--smoke);letter-spacing:1px;}
+.mkt-item-req{font-size:8px;letter-spacing:2px;text-transform:uppercase;}
+.mkt-item-req.ok{color:var(--green-b);}
+.mkt-item-req.locked{color:var(--crimson);}
+.mkt-item-buy{background:transparent;border:1px solid var(--gold-dim);padding:6px 14px;
+  font-family:var(--font-m);font-size:9px;letter-spacing:3px;color:var(--gold);cursor:pointer;
+  transition:all .2s;margin-top:6px;text-transform:uppercase;}
+.mkt-item-buy:hover:not(:disabled){background:rgba(212,175,55,.08);border-color:var(--gold);}
+.mkt-item-buy:disabled{opacity:.3;cursor:not-allowed;}
+
+/* HEAT OVERLAY */
+.heat-overlay{position:fixed;inset:0;pointer-events:none;z-index:500;box-shadow:inset 0 0 100px rgba(204,34,0,0);transition:box-shadow .5s;}
+.heat-overlay.on{box-shadow:inset 0 0 120px rgba(204,34,0,.22);animation:hpulse 2s ease-in-out infinite;}
+@keyframes hpulse{0%,100%{box-shadow:inset 0 0 100px rgba(204,34,0,.18)}50%{box-shadow:inset 0 0 160px rgba(204,34,0,.35)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .4s ease;}
+
+/* MODAL */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.moverlay.on{display:flex;}
+.mbox{background:var(--charcoal);border:1px solid var(--steel);padding:36px;max-width:480px;width:90%;text-align:center;animation:fadeIn .3s ease;max-height:90vh;overflow-y:auto;}
+.mtitle{font-family:var(--font-d);font-size:26px;letter-spacing:6px;color:var(--gold);margin-bottom:14px;}
+.mbody{font-family:var(--font-b);font-size:14px;color:var(--grey);line-height:1.7;margin-bottom:26px;}
+.macts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.mbt{background:transparent;border:1px solid var(--smoke);padding:9px 22px;font-family:var(--font-m);font-size:10px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;color:var(--grey);transition:all .2s;}
+.mbt:hover{border-color:var(--gold);color:var(--gold);}
+.mbt.danger:hover{border-color:var(--crimson);color:var(--crimson);}
+
+/* SPEC TREE */
+.spec-tree{display:flex;flex-direction:column;gap:8px;}
+.spec-item{display:flex;align-items:center;gap:10px;padding:8px;background:var(--steel);border:1px solid var(--ash);}
+.spec-icon{font-size:16px;width:24px;text-align:center;}
+.spec-info{flex:1;}
+.spec-name{font-size:10px;letter-spacing:2px;color:var(--grey);text-transform:uppercase;}
+.spec-bar-wrap{background:var(--ash);height:3px;margin-top:4px;}
+.spec-bar{height:3px;transition:width .6s ease;}
+.spec-bar.dip{background:var(--gold);}
+.spec-bar.san{background:var(--crimson);}
+.spec-bar.str{background:var(--blue);}
+
+/* CHAPTER CARD */
+.chap-card{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.2);border-left:4px solid var(--gold);padding:20px 24px;margin:0 20px 0;}
+.chap-num{font-size:9px;letter-spacing:6px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:6px;}
+.chap-title{font-family:var(--font-d);font-size:28px;letter-spacing:6px;color:var(--gold);margin-bottom:8px;}
+.chap-desc{font-family:var(--font-b);font-style:italic;font-size:14px;color:var(--grey);line-height:1.6;}
+
+/* CYCLE & OBJECTIVE */
+.cycle-day{color:var(--gold-dim);}
+.cycle-night{color:var(--purple);}
+.obj-bar{padding:10px 20px;border-bottom:1px solid var(--steel);background:rgba(42,90,42,.08);display:flex;align-items:center;gap:12px;}
+.obj-lbl{font-size:8px;letter-spacing:4px;color:var(--green-b);text-transform:uppercase;}
+.obj-txt{font-size:10px;color:var(--grey);letter-spacing:1px;}
+.obj-prog{margin-left:auto;font-family:var(--font-d);font-size:14px;color:var(--green-b);letter-spacing:2px;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--black);}
+::-webkit-scrollbar-thumb{background:var(--steel);}
+
+/* ══ LEGACY SCREEN ══ */
+#s-legacy{flex-direction:column;align-items:center;justify-content:flex-start;
+  background:var(--black);position:relative;overflow:hidden;min-height:100vh;}
+#s-legacy::before{content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);
+  pointer-events:none;z-index:2;}
+.legacy-vignette{position:fixed;inset:0;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.9) 100%);
+  pointer-events:none;z-index:3;}
+.legacy-top-fade{position:fixed;top:0;left:0;right:0;height:180px;
+  background:linear-gradient(to bottom,var(--black) 0%,transparent 100%);
+  pointer-events:none;z-index:4;}
+.legacy-bot-fade{position:fixed;bottom:0;left:0;right:0;height:180px;
+  background:linear-gradient(to top,var(--black) 0%,transparent 100%);
+  pointer-events:none;z-index:4;}
+.legacy-scroll-wrap{width:100%;max-width:740px;padding:100vh 32px 100vh;
+  position:relative;z-index:1;}
+@keyframes legacyRoll{
+  from{transform:translateY(0)}
+  to{transform:translateY(var(--scroll-dist))}
+}
+.legacy-scroll-wrap.rolling{animation:legacyRoll var(--scroll-dur) linear forwards;}
+
+/* RANK BADGE */
+.legacy-rank{text-align:center;margin-bottom:72px;}
+.legacy-rank-label{font-size:9px;letter-spacing:8px;color:var(--smoke);
+  text-transform:uppercase;margin-bottom:18px;}
+.legacy-rank-title{font-family:var(--font-d);font-size:clamp(42px,8vw,80px);
+  color:var(--gold);letter-spacing:8px;line-height:.95;
+  text-shadow:0 0 60px rgba(212,175,55,.5);margin-bottom:16px;}
+.legacy-rank-sub{font-family:var(--font-b);font-style:italic;font-size:16px;
+  color:var(--grey);letter-spacing:2px;}
+.legacy-line{width:200px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:28px auto;}
+
+/* STATS GRID */
+.legacy-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--steel);border:1px solid var(--steel);margin-bottom:64px;}
+.lstat{background:var(--charcoal);padding:18px 12px;text-align:center;}
+.lstat-lbl{font-size:8px;letter-spacing:4px;color:var(--smoke);
+  text-transform:uppercase;margin-bottom:8px;}
+.lstat-val{font-family:var(--font-d);font-size:28px;letter-spacing:2px;}
+.lstat-val.gold{color:var(--gold);}
+.lstat-val.crim{color:var(--crimson);}
+.lstat-val.purp{color:var(--purple);}
+.lstat-val.grn{color:var(--green-b);}
+.lstat-val.grey{color:var(--grey);}
+
+/* ORIGIN BLOCK */
+.legacy-origin{margin-bottom:60px;text-align:center;}
+.legacy-origin-tag{font-size:8px;letter-spacing:6px;color:var(--gold-dim);
+  text-transform:uppercase;margin-bottom:12px;}
+.legacy-origin-txt{font-family:var(--font-b);font-size:15px;color:var(--grey);
+  line-height:1.8;font-style:italic;}
+
+/* SECTION HEADER */
+.legacy-sec{font-size:9px;letter-spacing:7px;color:var(--gold-dim);
+  text-transform:uppercase;margin-bottom:28px;text-align:center;
+  padding-bottom:12px;border-bottom:1px solid var(--steel);}
+
+/* TIMELINE */
+.legacy-timeline{display:flex;flex-direction:column;gap:0;margin-bottom:60px;}
+.ltitem{display:flex;gap:20px;padding:18px 0;border-bottom:1px solid var(--steel);}
+.ltitem:last-child{border-bottom:none;}
+.ltitem-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:56px;}
+.ltdot{width:10px;height:10px;border-radius:50%;background:var(--gold-dim);flex-shrink:0;}
+.ltdot.ag{background:var(--crimson);}
+.ltdot.dp{background:var(--gold);}
+.ltdot.es{background:var(--blue);}
+.ltdot.ca{background:var(--smoke);}
+.ltline{width:1px;flex:1;background:var(--steel);margin-top:6px;}
+.ltitem-right{flex:1;}
+.ltitem-loc{font-size:8px;letter-spacing:3px;color:var(--smoke);
+  text-transform:uppercase;margin-bottom:4px;}
+.ltitem-choice{font-size:10px;letter-spacing:2px;color:var(--gold-dim);
+  text-transform:uppercase;margin-bottom:6px;font-family:var(--font-m);}
+.ltitem-res{font-family:var(--font-b);font-size:13px;color:var(--grey);
+  line-height:1.6;}
+
+/* FINAL MESSAGE */
+.legacy-final{text-align:center;margin-top:20px;margin-bottom:40px;}
+.legacy-final-txt{font-family:var(--font-b);font-style:italic;font-size:17px;
+  color:var(--grey);line-height:1.8;max-width:540px;margin:0 auto 32px;}
+.legacy-final-name{font-family:var(--font-d);font-size:clamp(36px,7vw,64px);
+  color:var(--gold);letter-spacing:10px;
+  text-shadow:0 0 50px rgba(212,175,55,.4);}
+.legacy-final-score{font-size:11px;letter-spacing:5px;color:var(--smoke);
+  margin-top:12px;text-transform:uppercase;}
+
+/* NEW GAME BUTTON */
+.legacy-newgame{display:block;background:transparent;border:1px solid var(--gold-dim);
+  padding:16px 48px;font-family:var(--font-d);font-size:18px;letter-spacing:8px;
+  color:var(--gold);cursor:pointer;transition:all .3s;
+  margin:40px auto 0;text-transform:uppercase;}
+.legacy-newgame:hover{background:rgba(212,175,55,.07);border-color:var(--gold);
+  box-shadow:0 0 30px rgba(212,175,55,.15);}
+
+/* ── MUTE BUTTON ── */
+#muteBtn{position:fixed;bottom:24px;left:24px;z-index:9998;background:rgba(0,0,0,.75);
+  border:1px solid var(--smoke);padding:8px 16px;font-family:var(--font-m);font-size:9px;
+  letter-spacing:3px;color:var(--smoke);cursor:pointer;text-transform:uppercase;
+  transition:all .25s;display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px);}
+#muteBtn:hover{border-color:var(--gold-dim);color:var(--gold-dim);}
+#muteBtn.muted{border-color:rgba(204,34,0,.6);color:var(--crimson);}
+#muteBtn .micon{font-size:13px;line-height:1;}
+#radioAlert{position:fixed;top:70px;right:24px;z-index:9997;font-family:var(--font-m);
+  font-size:9px;letter-spacing:3px;color:var(--crimson);background:rgba(0,0,0,.85);
+  border:1px solid rgba(204,34,0,.4);padding:6px 12px;display:none;
+  animation:radioPulse 1.5s ease-in-out infinite;}
+@keyframes radioPulse{0%,100%{opacity:.6}50%{opacity:1;border-color:var(--crimson);}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <img class="splash-img" src="./icone.png" alt="Domínio Nort">
+  <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+  <div class="splash-label">Carregando operação...</div>
+</div>
+
+<div class="heat-overlay" id="heatOverlay"></div>
+
+<!-- MUTE BUTTON -->
+<button id="muteBtn" onclick="toggleMute()" title="Alternar áudio">
+  <span class="micon" id="muteIcon">🔊</span><span id="muteLbl">SOM</span>
+</button>
+
+<!-- RADIO ALERT -->
+<div id="radioAlert">◈ RÁDIO POLICIAL — SETOR EM ALERTA</div>
+
+<!-- ══════ MENU ══════ -->
+<div id="s-menu" class="screen active">
+  <div class="menu-bg">NORT</div>
+  <div class="logo">
+    <div class="logo-title">DOMÍNIO<br>NORT</div>
+    <div class="logo-line"></div>
+    <div class="logo-sub">Protocolo Completo v2.0 — Simulador de Estratégia Criminal</div>
+    <div class="logo-chap">Capítulos I · II · III — Sistema Integral</div>
+  </div>
+  <div class="menu-opts">
+    <button class="mbtn" onclick="goCreate()"><span class="px">▶</span>INFILTRAR</button>
+    <button class="mbtn" id="bRetomar" disabled onclick="retomar()"><span class="px">◈</span>RETOMAR OPERAÇÃO</button>
+    <button class="mbtn danger" id="bQueimar" disabled onclick="openModal('mQueimar')"><span class="px">✕</span>QUEIMAR ARQUIVO</button>
+  </div>
+  <div class="menu-ver">PROTOCOLO v2.0 // SISTEMA NOIR</div>
+  <div class="menu-credit">Liderança Técnica: Daniel Lopes (norisk)</div>
+</div>
+
+<!-- ══════ CREATE ══════ -->
+<div id="s-create" class="screen">
+  <div class="cr-hdr"><h1>FICHA CRIMINAL</h1><p>Defina sua identidade antes de entrar no jogo</p></div>
+
+  <div class="cr-sec">
+    <div class="sec-lbl">// 01 — VULGO</div>
+    <div class="vinput-wrap">
+      <span class="vpfx">ALCUNHA //</span>
+      <input class="vinput" id="vInput" type="text" maxlength="20" placeholder="SEU NOME NAS RUAS..." autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+
+  <div class="cr-sec">
+    <div class="sec-lbl">// 02 — ORIGEM</div>
+    <div class="ogrid">
+      <div class="ocard" onclick="selO('desertor',this)">
+        <div class="oname">O DESERTOR</div>
+        <div class="odesc">Veio de dentro do sistema. Conhece os protocolos, fraquezas e pontos cegos.</div>
+        <div class="ostats">
+          <div class="ostat">Arsenal: <span>+2 Fuzis, +1 Pistola</span></div>
+          <div class="ostat">Heat Inicial: <span>+20%</span></div>
+          <div class="ostat">Respeito: <span>30 pts</span></div>
+          <div class="ostat">Dinheiro Sujo: <span>R$ 8.000</span></div>
+        </div>
+      </div>
+      <div class="ocard" onclick="selO('visionario',this)">
+        <div class="oname">O VISIONÁRIO</div>
+        <div class="odesc">Saiu do esquema legal. Capital acumulado, conexões e ambição sem limite.</div>
+        <div class="ostats">
+          <div class="ostat">Arsenal: <span>1 Pistola</span></div>
+          <div class="ostat">Heat Inicial: <span>0%</span></div>
+          <div class="ostat">Respeito: <span>10 pts</span></div>
+          <div class="ostat">Dinheiro Limpo: <span>R$ 25.000</span></div>
+        </div>
+      </div>
+      <div class="ocard" onclick="selO('sobrevivente',this)">
+        <div class="oname">O SOBREVIVENTE</div>
+        <div class="odesc">Cresceu no asfalto. Sem privilégio. A lealdade da tropa sobe mais rápido.</div>
+        <div class="ostats">
+          <div class="ostat">Arsenal: <span>2 Pistolas</span></div>
+          <div class="ostat">Heat Inicial: <span>5%</span></div>
+          <div class="ostat">Respeito: <span>20 pts</span></div>
+          <div class="ostat">Dinheiro Sujo: <span>R$ 5.000</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cr-sec">
+    <div class="sec-lbl">// 03 — TIPO DE ORGANIZAÇÃO</div>
+    <div class="fgrid">
+      <div class="fcard" onclick="selF('faccao',this)">
+        <div class="fname">FACÇÃO</div>
+        <div class="fdesc">Massa e território. +Soldados, +Respeito base</div>
+      </div>
+      <div class="fcard" onclick="selF('mafia',this)">
+        <div class="fname">MÁFIA</div>
+        <div class="fdesc">Política e dinheiro. +Conexões, -Heat de base</div>
+      </div>
+      <div class="fcard" onclick="selF('cartel',this)">
+        <div class="fname">CARTEL</div>
+        <div class="fdesc">Logística e produção. +Renda, +Rotas</div>
+      </div>
+      <div class="fcard" onclick="selF('milicia',this)">
+        <div class="fname">MILÍCIA</div>
+        <div class="fdesc">Controle de serviços. +Temor, +Estabilidade</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cr-sec">
+    <div class="sec-lbl">// 04 — REGIÃO</div>
+    <div class="rgrid">
+      <div class="rcard" onclick="selR('norte',this)">
+        <div class="rname">ZONA NORTE</div>
+        <div class="rdiff n">■ NORMAL</div>
+        <div class="rdesc">Equilíbrio entre lucro e pressão policial</div>
+      </div>
+      <div class="rcard" onclick="selR('centro',this)">
+        <div class="rname">CENTRO</div>
+        <div class="rdiff h">■ DIFÍCIL</div>
+        <div class="rdesc">Heat sobe rápido. Proximidade do governo</div>
+      </div>
+      <div class="rcard" onclick="selR('fronteira',this)">
+        <div class="rname">FRONTEIRA</div>
+        <div class="rdiff hc">■ HARDCORE</div>
+        <div class="rdesc">Guerra constante. Pouco suporte comunitário</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="cbtn" id="bConfirm" onclick="startGame()" disabled>INFILTRAR NO SISTEMA</button>
+</div>
+
+<!-- ══════ GAME ══════ -->
+<div id="s-game" class="screen">
+  <div class="hud">
+    <div class="hud-brand">
+      <div class="hud-brand-name" id="hName">—</div>
+      <div class="hud-brand-sub" id="hChap">CAP.I — SEMENTES NO ASFALTO</div>
+    </div>
+    <div class="hud-stats">
+      <div class="hstat heat"><div class="hstat-lbl">Heat</div><div class="hstat-val" id="vHeat" style="color:var(--crimson)">0%</div><div class="hstat-bar" id="bHeat" style="width:0%"></div></div>
+      <div class="hstat resp"><div class="hstat-lbl">Respeito</div><div class="hstat-val" id="vResp" style="color:var(--gold)">0</div><div class="hstat-bar" id="bResp" style="width:0%"></div></div>
+      <div class="hstat temor"><div class="hstat-lbl">Temor</div><div class="hstat-val" id="vTemor" style="color:var(--purple)">0</div><div class="hstat-bar" id="bTemor" style="width:0%"></div></div>
+      <div class="hstat sold"><div class="hstat-lbl">Soldados</div><div class="hstat-val" id="vSold" style="color:var(--green-b)">0</div><div class="hstat-bar" id="bSold" style="width:0%"></div></div>
+      <div class="hstat dsujo"><div class="hstat-lbl">Sujo</div><div class="hstat-val" id="vSujo" style="color:var(--grey);font-size:13px">0</div><div class="hstat-bar" id="bSujo" style="width:0%"></div></div>
+      <div class="hstat dlimpo"><div class="hstat-lbl">Limpo</div><div class="hstat-val" id="vLimpo" style="color:var(--gold);font-size:13px">0</div><div class="hstat-bar" id="bLimpo" style="width:0%"></div></div>
+    </div>
+    <div class="hud-right"><div class="dot"></div><span id="hCycle" class="cycle-day">DIA</span></div>
+  </div>
+
+  <div class="gbody">
+    <div class="gmain">
+      <div class="obj-bar">
+        <div class="obj-lbl">OBJETIVO</div>
+        <div class="obj-txt" id="objTxt">—</div>
+        <div class="obj-prog" id="objProg"></div>
+      </div>
+      <div class="gloc">
+        <div class="gloc-icon">◈</div>
+        <div class="gloc-name" id="gLoc">—</div>
+        <div class="gloc-status" id="gStatus">■ OPERACIONAL</div>
+      </div>
+      <img class="scene-img" id="sceneImg" src="" alt="cena">
+      <div class="dlog" id="dlog"></div>
+      <div class="choice-area" id="choiceArea">
+        <div class="choice-prompt" id="choicePmt">// AGUARDANDO...</div>
+        <div class="cgrid" id="cgrid"></div>
+      </div>
+    </div>
+
+    <div class="gside">
+      <div class="ss">
+        <div class="ss-ttl">// A CÚPULA</div>
+        <div class="tcard">
+          <div class="tname">TENENTE DITO</div>
+          <div class="trole">O Estrategista</div>
+          <div class="tquote" id="qDito">Os monitores estão limpos. O que vamos movimentar hoje?</div>
+        </div>
+        <div class="tcard">
+          <div class="tname">TENENTE NEGUINHO</div>
+          <div class="trole">A Contenção</div>
+          <div class="tquote" id="qNeg">O bonde tá pronto. Dá o sinal.</div>
+        </div>
+      </div>
+
+      <div class="ss">
+        <div class="ss-ttl">// ESPECIALIZAÇÃO</div>
+        <div class="spec-tree">
+          <div class="spec-item">
+            <div class="spec-icon">🤝</div>
+            <div class="spec-info">
+              <div class="spec-name">Diplomata</div>
+              <div class="spec-bar-wrap"><div class="spec-bar dip" id="specDip" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">🔪</div>
+            <div class="spec-info">
+              <div class="spec-name">Sanguinário</div>
+              <div class="spec-bar-wrap"><div class="spec-bar san" id="specSan" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-icon">♟</div>
+            <div class="spec-info">
+              <div class="spec-name">Estrategista</div>
+              <div class="spec-bar-wrap"><div class="spec-bar str" id="specStr" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ss">
+        <div class="ss-ttl">// ARSENAL</div>
+        <div id="arsenalList"></div>
+        <button class="mkt-btn" onclick="openMarket()">◈ MERCADO NEGRO</button>
+      </div>
+
+      <div class="ss">
+        <div class="ss-ttl">// FACÇÕES RIVAIS</div>
+        <div id="rivalList"></div>
+      </div>
+
+      <div class="news">
+        <div class="news-lbl">◈ LOG DO SETOR</div>
+        <div class="news-txt" id="newsText">Nenhuma movimentação registrada.</div>
+      </div>
+
+      <div class="ss">
+        <div class="ss-ttl">// CRÔNICAS DO DOMÍNIO</div>
+        <div id="chronicle" style="max-height:200px;overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="moverlay" id="mQueimar">
+  <div class="mbox">
+    <div class="mtitle">QUEIMAR ARQUIVO</div>
+    <div class="mbody">Isso vai deletar <strong style="color:var(--gold)">toda a operação</strong>. Sem legado, sem retorno. O nome some das ruas para sempre.</div>
+    <div class="macts">
+      <button class="mbt danger" onclick="queimarArq()">CONFIRMAR</button>
+      <button class="mbt" onclick="closeModal('mQueimar')">CANCELAR</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="mGameOver">
+  <div class="mbox">
+    <div class="mtitle" id="goTitle">ARQUIVO MORTO</div>
+    <div class="mbody" id="goBody">Sua trajetória chegou ao fim.</div>
+    <div class="macts">
+      <button class="mbt" onclick="location.reload()">NOVA OPERAÇÃO</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="mLavagem">
+  <div class="mbox">
+    <div class="mtitle">LAVAR DINHEIRO</div>
+    <div class="mbody">Investir em empresa de fachada converte Dinheiro Sujo em Limpo (taxa: 30% de perda).</div>
+    <div class="macts">
+      <button class="mbt" onclick="lavarDinheiro(5000)">LAVAR R$5.000</button>
+      <button class="mbt" onclick="lavarDinheiro(15000)">LAVAR R$15.000</button>
+      <button class="mbt danger" onclick="closeModal('mLavagem')">CANCELAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA DE LEGADO -->
+<div id="s-legacy" class="screen">
+  <div class="legacy-vignette"></div>
+  <div class="legacy-top-fade"></div>
+  <div class="legacy-bot-fade"></div>
+  <div class="legacy-scroll-wrap" id="legacyScroll"></div>
+</div>
+
+<!-- EVENTO ALEATÓRIO MODAL -->
+<div class="moverlay" id="mRandEvent">
+  <div class="mbox" style="max-width:500px;text-align:left;">
+    <div style="font-size:8px;letter-spacing:5px;color:var(--crimson);text-transform:uppercase;margin-bottom:10px;" id="rEvTag">◈ EVENTO INESPERADO</div>
+    <div class="mtitle" id="rEvTitle" style="text-align:left;font-size:22px;"></div>
+    <div style="width:100%;height:3px;background:linear-gradient(90deg,var(--gold-dim),transparent);margin:10px 0 16px;"></div>
+    <div class="mbody" id="rEvBody" style="text-align:left;font-size:13px;"></div>
+    <div id="rEvChoices" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+  </div>
+</div>
+
+<!-- MERCADO NEGRO MODAL -->
+<div class="moverlay" id="mMarket">
+  <div class="mbox" style="max-width:520px;text-align:left;">
+    <div class="mtitle" style="text-align:center;">MERCADO NEGRO</div>
+    <div style="background:url('./arsenal.jpg') center/cover no-repeat;height:100px;margin-bottom:20px;filter:brightness(.6);"></div>
+    <div id="marketItems"></div>
+    <div class="macts" style="margin-top:16px;">
+      <button class="mbt danger" onclick="closeModal('mMarket')">FECHAR CANAL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DOMÍNIO NORT — ENGINE v2.0  (Noir + Porto Seco)
+// ═══════════════════════════════════════════════════
+
+const SAVE_KEY = 'dnort_v3';
+
+const ORIGINS = {
+  desertor:     { label:'O Desertor',    heat:20, resp:30, temor:10, sold:5, sujo:8000,  limpo:0,     hm:1.2, arsenal:['Pistola .40','Fuzil 5.56','Fuzil 5.56'] },
+  visionario:   { label:'O Visionário',  heat:0,  resp:10, temor:5,  sold:3, sujo:0,     limpo:25000, hm:0.8, arsenal:['Pistola .40'] },
+  sobrevivente: { label:'O Sobrevivente',heat:5,  resp:20, temor:8,  sold:4, sujo:5000,  limpo:0,     hm:1.0, arsenal:['Pistola .40','Pistola .40'] }
+};
+
+const FACTION_BONUS = {
+  faccao:  { soldBonus:2, heatMod:0,    descr:'Massa e domínio territorial' },
+  mafia:   { soldBonus:0, heatMod:-0.1, descr:'Política e conexões' },
+  cartel:  { soldBonus:0, heatMod:0,    descr:'Logística e produção' },
+  milicia: { soldBonus:1, heatMod:0.05, descr:'Controle e serviços' }
+};
+
+const REGION_MOD = { norte:1.0, centro:1.4, fronteira:1.8 };
+
+const RIVALS_BASE = [
+  { id:'sindicato', name:'Sindicato da Sombra', status:'paz',    desc:'Máfia discreta e bilionária' },
+  { id:'irmandade', name:'Irmandade do Aço',    status:'paz',    desc:'Milícia paramilitar de elite' },
+  { id:'cartel7',   name:'Cartel dos Sóis',     status:'paz',    desc:'Donos das rotas marítimas' },
+  { id:'alianca7',  name:'Aliança do Setor 7',  status:'guerra', desc:'Facção de massa — inimigo inicial' },
+  { id:'cifrao',    name:'Ordem do Cifrão',     status:'paz',    desc:'Máfia focada em crimes digitais' }
+];
+
+// ── MERCADO NEGRO — itens especiais ──
+const MARKET_ITEMS = [
+  {
+    id:'pistola50', name:'PISTOLA .50 DESERT EAGLE', price:18000,
+    desc:'Capacidade de parar blindado leve. Prestígio instantâneo nas ruas.',
+    reqResp:0, reqChap:1,
+    effect:{resp:5,temor:10,arsenal:'Pistola .50 Desert Eagle'}
+  },
+  {
+    id:'fuzilheavy', name:'FUZIL .762 PESADO', price:32000,
+    desc:'Munição capaz de atravessar colete. Dominância de território.',
+    reqResp:30, reqChap:2,
+    effect:{resp:8,temor:15,sold:2,arsenal:'Fuzil .762 Pesado'}
+  },
+  {
+    id:'drone', name:'DRONE DE VIGILÂNCIA', price:45000,
+    desc:'Controle total do perímetro. Elimina surpresas e emboscadas.',
+    reqResp:55, reqChap:2,
+    effect:{heat:-8,resp:12,arsenal:'Drone de Vigilância'}
+  },
+  {
+    id:'sniper', name:'RIFLE SNIPER .338', price:60000,
+    desc:'Alcance de 800m. Para os que controlam de longe.',
+    reqResp:65, reqChap:3,
+    effect:{resp:15,temor:20,arsenal:'Rifle Sniper .338'}
+  },
+  {
+    id:'rpg', name:'LANÇADOR RPG-7', price:90000,
+    desc:'Poder de fogo absoluto. Reservado para os intocáveis do Domínio.',
+    reqResp:80, reqChap:3,
+    effect:{temor:30,resp:20,sold:5,arsenal:'Lançador RPG-7'}
+  }
+];
+
+let G = {};
+let selOrigin=null, selFaction=null, selRegion=null;
+let eventIdx=0;
+let cycle='dia';
+let cycleHour=6;
+let specPoints = { dip:0, san:0, str:0 };
+let currentChapterNum=1;
+let twQueue=[];
+let twRunning=false;
+
+// ═══════════════════════════
+//  EVENT DATABASE
+// ═══════════════════════════
+const CHAPTERS = [
+  // ─── CAP I ───
+  {
+    num:1, title:'SEMENTES NO ASFALTO',
+    desc:'Estabeleça sua primeira boca e recrute 10 soldados. O asfalto vai testar quem você é.',
+    obj:'Recrutar 10 soldados e 50k Respeito',
+    events: [
+      {
+        id:'c1e1', loc:'BECO DO FUNDO — ZONA NORTE', img:'',
+        narr:`A fumaça do cigarro se mistura ao cheiro de asfalto quente. Você chegou. O Beco do Fundo não é mais do que um corredor esquecido entre dois prédios sem reboco — mas é o seu beco agora. Tenente Dito surge da sombra com um olhar calculista.`,
+        npcs:[{t:'allied',s:'TENENTE DITO',txt:'Chefe. A Aliança do Setor 7 sabe que você chegou. Mandaram um moleque cheio de tatuagem perguntar quem é o dono desse beco. O cara tá na esquina esperando resposta.'}],
+        prompt:'// O MOLEQUE DO SETOR 7 ESTÁ NA ESQUINA. COMO VOCÊ RESPONDE?',
+        choices:[
+          {t:'ag',l:'[AGRESSIVA]',txt:'"Manda ele embora com uma mensagem no braço."',
+           fx:{heat:12,resp:15,temor:20},spec:'san',
+           res:`Você manda o aviso. O moleque volta pro Setor 7 com um corte no ombro e a mensagem tatuada na memória. Nas próximas horas o beco fica tenso — mas ninguém cruza a linha. A rua aprendeu que tem gente nova, e essa gente não brinca.`,
+           dito:'Resolveu. Mas agora o Setor 7 vai responder. Precisamos fechar o perímetro antes do anoitecer.',neg:'Bom. Agora eles sabem com quem tão falando.',
+           news:'Confronto registrado no Beco do Fundo. Moradores relatam tensão crescente com grupos rivais.'},
+          {t:'dp',l:'[DIPLOMÁTICA]',txt:'"Chama ele aqui. A gente conversa, vê o que o Setor 7 quer."',
+           fx:{heat:-5,resp:5,temor:-5,sujo:-1500},spec:'dip',
+           res:`O menino senta, aceita o café, fala mais do que devia. O Setor 7 quer pedágio sobre a rota da esquina. Você negocia, paga a primeira semana do próprio bolso. O beco fica quieto.`,
+           dito:'Inteligente. Compramos tempo. Mas pedágio é sinal de fraqueza sem um plano de saída.',neg:'Tá bom. Mas se eles pisarem no beco sem avisar, o papo é outro.',
+           news:'Calmaria suspeita nos bairros. Inteligência investiga possíveis acordos escusos.'},
+          {t:'es',l:'[ESTRATÉGICA]',txt:'"Não responde agora. Primeiro mapeia o Setor 7."',
+           fx:{heat:0,resp:8,temor:5,sujo:-2000},spec:'str',
+           res:`Dito sorri pela primeira vez. Vocês mandam um olheiro. Em duas horas sabem tudo: 18 soldados, duas rotas de saída, um ponto que fecha às 22h. Informação vale mais que qualquer bala.`,
+           dito:'Agora temos o mapa deles. Cada passo que eles derem, a gente já sabe.',neg:'Quando for hora de agir, a gente age com tudo.',
+           news:'Movimentação discreta na Zona Norte. Analistas apontam planejamento de longo prazo.'},
+          {t:'ca',l:'[CAUTELOSA]',txt:'"Fecha tudo. Não tamos prontos ainda."',
+           fx:{heat:-10,resp:-10,temor:-8},spec:'',
+           res:`O moleque vai embora sem resposta. O Setor 7 vai interpretar como fraqueza. Mas hoje o beco está intacto.`,
+           dito:'Entendo a cautela. Mas sem resposta, eles vão voltar com mais gente.',neg:'Tropa não gostou, chefe. Fica de olho no moral.',
+           news:'Setor 7 reporta expansão de influência na Zona Norte sem resistência organizada.'}
+        ]
+      },
+      {
+        id:'c1e2', loc:'BECO DO FUNDO — MADRUGADA', img:'baque.jpg',
+        narr:`23h47. O silêncio antes do baque tem cheiro próprio — pólvora e adrenalina. Neguinho aparece correndo, respiração pesada.`,
+        npcs:[{t:'allied',s:'TENENTE NEGUINHO',txt:'Chefe! Três motoboys do Setor 7 na entrada. Armados. Parecem bêbados ou cheios de coragem — tanto faz, é a mesma coisa. Temos dois soldados na frente, dois atrás.'}],
+        prompt:'// BAQUE IMINENTE — QUAL É A ORDEM?',
+        choices:[
+          {t:'ag',l:'[AGRESSIVA]',txt:'"Deixa entrar. Quando pisarem no meio do beco, fecha os dois lados."',
+           fx:{heat:18,resp:20,temor:25,sold:-1,sujo:3000},spec:'san',
+           res:`A emboscada é limpa. Dois correm, um não consegue. O beco fica manchado mas a mensagem vai pro Setor 7 em código vermelho. Na manhã seguinte, ninguém chega perto sem avisar.`,
+           dito:'Baque confirmado. Setor 7 vai recalibrar. Reforce o perímetro.',neg:'Limpamos o setor. O ferro cantou e eles correram. A praça é nossa!',
+           news:'Violência dispara na Zona Norte. PM investiga confronto no Beco do Fundo.'},
+          {t:'dp',l:'[DIPLOMÁTICA]',txt:'"Manda Dito falar com eles. Talvez seja só provocação."',
+           fx:{heat:5,resp:5,temor:-5,sujo:-3000},spec:'dip',
+           res:`Dito vai de mãos abertas. Os três querem produto. Você manda três pacotes como gesto de respeito mútuo. Eles vão. O sangue fica onde está.`,
+           dito:'Resolvido com papo. Mas eles vão testar de novo.',neg:'Eu teria resolvido diferente. Mas por hora, tá bom.',
+           news:'Registros de negociação entre grupos na Zona Norte.'},
+          {t:'es',l:'[ESTRATÉGICA]',txt:'"Fecha as luzes. Dito filma do telhado — queremos rosto e placa."',
+           fx:{heat:3,resp:12,temor:10},spec:'str',
+           res:`No escuro, os três perdem a coragem. Dito traz imagens do telhado: dois têm ficha, um é sobrinho de um tenente rival. Informação guardada. Vai valer mais tarde.`,
+           dito:'Temos alavancagem. Esse sobrinho pode ser útil na hora certa.',neg:'Inteligente. Mas se voltarem com mais gente, a resposta vai ser diferente.',
+           news:'Câmeras particulares registram movimentação noturna na Zona Norte.'},
+          {t:'ca',l:'[CAUTELOSA]',txt:'"Todo mundo some pela saída dos fundos. Hoje não."',
+           fx:{heat:-8,resp:-15,temor:-12,sold:0},spec:'',
+           res:`Vocês somem na madrugada. Os três chegam, não acham ninguém, picham o beco com a marca do Setor 7 e vão embora. De manhã, dois soldados pediram desligamento.`,
+           dito:'Sobrevivemos. Mas a reputação levou um golpe sério essa noite.',neg:'Dois recrutas foram embora. Precisamos agir antes que mais gente pense o mesmo.',
+           news:'Pichações de facção rival no Beco do Fundo. Bairro questiona quem controla o território.'}
+        ]
+      },
+      {
+        id:'c1e3', loc:'SALÃO DE BARBEIRO — RUA DAS AMENDOEIRAS', img:'',
+        narr:`Um salão de barbeiro no final da Rua das Amendoeiras — onde as notícias chegam antes do jornal. Dito trouxe três candidatos a soldado.`,
+        npcs:[{t:'allied',s:'TENENTE DITO',txt:'Chefe, trouxe três caras bons. Cada um tem um custo. Precisamos de pelo menos mais dois pra fechar o perímetro.'}],
+        prompt:'// COMO VOCÊ FAZ O RECRUTAMENTO?',
+        choices:[
+          {t:'ag',l:'[AGRESSIVA]',txt:'"Pega os três. Quem entrar, entra por inteiro — sem saída."',
+           fx:{heat:8,resp:10,temor:15,sold:3,sujo:-4500},spec:'san',
+           res:`Os três entram. Um tem histórico de violência — vai ser difícil controlar, mas hoje é um ativo. O perímetro fecha. A tropa sobe para oito soldados.`,
+           dito:'Tropa fechada. Mas vigila esse Pitbull — ele tem fio solto.',neg:'Agora somos oito. Isso dá pra segurar o beco.',
+           news:'Expansão de efetivo registrada por grupo na Zona Norte. PM eleva alerta.'},
+          {t:'dp',l:'[DIPLOMÁTICA]',txt:'"Conversa com cada um. Paga bem, trata com respeito."',
+           fx:{heat:2,resp:18,temor:-5,sold:2,sujo:-6000},spec:'dip',
+           res:`Dois dos três entram convencidos. O terceiro recusa — e vai embora em silêncio, sem delatar. Esses dois são fiéis. Em seis meses, um vai te salvar a vida.`,
+           dito:'Dois soldados leais valem mais que cinco comprados. Decisão certa.',neg:'São dois, não três. Mas são bons.',
+           news:'Sem registros de violência na Zona Norte nas últimas 24 horas.'},
+          {t:'es',l:'[ESTRATÉGICA]',txt:'"Antes de decidir, quero a ficha completa de cada um."',
+           fx:{heat:0,resp:12,temor:8,sold:2,sujo:-2000},spec:'str',
+           res:`Dito demora dois dias, mas traz tudo. Um dos três tem dívida com o Sindicato da Sombra — risco de dupla lealdade. Você descarta ele. Os dois restantes entram verificados.`,
+           dito:'Agora temos alavancagem. Bem jogado.',neg:'Dois, mas verificados. Prefiro assim.',
+           news:'Sem registros relevantes no setor.'},
+          {t:'ca',l:'[CAUTELOSA]',txt:'"Não recruta ninguém agora. Cresce devagar."',
+           fx:{heat:-5,resp:-8,temor:0,sold:0},spec:'',
+           res:`Ninguém entra. A tropa continua pequena. Dito concorda com a cautela, mas Neguinho faz cara feia — o perímetro descoberto é um risco real.`,
+           dito:'Entendo. Mas o perímetro fica descoberto.',neg:'Com cinco homens não dá pra cobrir três entradas ao mesmo tempo.',
+           news:'Zona Norte registra baixa movimentação. Setor 7 avança em territórios adjacentes.'}
+        ]
+      },
+      {
+        id:'c1e4', loc:'QG — SUBSOLO DO BECO', img:'',
+        narr:`O primeiro QG é improvisado: uma garagem com cadeados novos, câmeras baratas nos cantos e um mapa da região pendurado na parede com alfinetes. Dito está em pé na frente do mapa.`,
+        npcs:[{t:'allied',s:'TENENTE DITO',txt:'Chefe, temos duas escolhas de rota de importação. A Fronteira Seca é barata mas o risco de apreensão é alto. O Porto custa mais, mas o volume é industrial. Qual rota abrimos?'}],
+        prompt:'// QUAL ROTA DE IMPORTAÇÃO VOCÊ ABRE?',
+        choices:[
+          {t:'ag',l:'[FRONTEIRA SECA]',txt:'"Fronteira Seca. Risco alto, mas custa pouco e precisamos do produto já."',
+           fx:{heat:15,resp:8,temor:5,sujo:12000},spec:'san',
+           res:`A primeira carga chega em três dias. Risco alto materializado: uma parte foi apreendida. Mas o que sobrou já bota o ponto pra funcionar. O dinheiro começa a circular.`,
+           dito:'Parcial, mas funcionou. Precisamos diversificar antes da próxima remessa.',neg:'Produto chegou. Tamo no lucro.',
+           news:'PRF registra apreensão de carga na fronteira. Origem desconhecida.'},
+          {t:'dp',l:'[PORTO]',txt:'"Porto. Mais caro, mas volume industrial e menos risco."',
+           fx:{heat:5,resp:12,temor:0,sujo:-8000},spec:'dip',
+           res:`O investimento inicial é pesado mas o retorno em escala compensa. A carga chega intacta. O ponto opera em volume que garante caixa para as próximas semanas.`,
+           dito:'Excelente. Com esse volume, conseguimos negociar preço melhor com os fornecedores.',neg:'Produto bom, carga grande. Agora é vender.',
+           news:'Movimento portuário aumenta na região. Autoridades alfandegárias em alerta.'},
+          {t:'es',l:'[AERONAVE DISCRETA]',txt:'"Aeronave discreta. Menor volume, mas praticamente invisível."',
+           fx:{heat:3,resp:10,temor:8,sujo:5000},spec:'str',
+           res:`A aeronave pousa num campo particular às 3 da manhã. Pouco produto, mas ninguém viu nada. A rota existe e está limpa para uso futuro.`,
+           dito:'A rota está estabelecida. Podemos escalar gradualmente sem levantar suspeita.',neg:'Pouco produto, mas a rota tá de pé. É o que importa.',
+           news:'Radar detecta aeronave não identificada no interior. Investigação aberta.'},
+          {t:'ca',l:'[AGUARDAR]',txt:'"Ainda não. Precisamos de mais inteligência antes de abrir rota."',
+           fx:{heat:-5,resp:-5,temor:0},spec:'',
+           res:`A cautela tem preço: o ponto fica parado, a tropa sem trabalho começa a questionar. Mas você não comprometeu nenhuma rota prematuramente.`,
+           dito:'Entendo a lógica. Mas a tropa começa a fazer perguntas sobre quando o trabalho começa.',neg:'Chefe, ponto parado é ponto perdendo dinheiro.',
+           news:'Nenhuma movimentação registrada no setor.'}
+        ]
+      },
+      {
+        id:'c1e5', loc:'TRIBUNAIS DO CRIME — PRAÇA DO CORETO', img:'caveirao.jpg',
+        narr:`Um evento que toda liderança teme: um desentendimento interno. Um soldado acusa outro de roubar do caixa. Toda a tropa está olhando. Um carro preto da PM parou na esquina — viatura de inteligência. A decisão que você toma agora vai definir a cultura da organização.`,
+        npcs:[
+          {t:'allied',s:'SOLDADO MARQUINHOS',txt:'Chefe, eu juro que não peguei nada. Esse cara tá me armando porque eu descobri que ele tava repassando informação pro Setor 7.'},
+          {t:'allied',s:'TENENTE DITO',txt:'Chefe, os dois têm motivo pra mentir. Mas temos que resolver isso agora, a tropa tá olhando.'}
+        ],
+        prompt:'// COMO VOCÊ JULGA O CONFLITO INTERNO?',
+        choices:[
+          {t:'ag',l:'[AGRESSIVA]',txt:'"Os dois ficam de castigo. Quem me traz prova concreta do X-9 ganha bônus."',
+           fx:{heat:5,resp:5,temor:25,sold:0},spec:'san',
+           res:`A decisão dura — mas justa na métrica da rua. Ninguém questiona. Nos dias seguintes, dois soldados delatam o suspeito com evidências. A organização aprendeu que o chefe não aceita jogo sujo internamente.`,
+           dito:'Resolveu com autoridade. A tropa está mais coesa.',neg:'Esse método funciona. Sem X-9 dentro de casa.',
+           news:'Sem registros.'},
+          {t:'dp',l:'[DIPLOMÁTICA]',txt:'"Separa os dois. Cada um conta a versão sem ouvir o outro."',
+           fx:{heat:0,resp:15,temor:5,sold:0},spec:'dip',
+           res:`Uma hora de interrogatório separado revela contradições na versão do acusador. Não há prova de X-9, mas a inconsistência é clara. Você dispensa o denunciante com advertência e mantém Marquinhos sob vigilância.`,
+           dito:'Julgamento sábio. A tropa percebeu que você pensa antes de agir.',neg:'Funcionou. Mas vigilia no Marquinhos por mais uma semana.',
+           news:'Sem registros externos.'},
+          {t:'es',l:'[ESTRATÉGICA]',txt:'"Instala vigilância nos dois sem eles saberem. Deixa respirar três dias."',
+           fx:{heat:0,resp:10,temor:10,sold:0,sujo:-1000},spec:'str',
+           res:`Os três dias revelam tudo: o acusador de fato estava repassando rotas. Você age com evidência sólida, sem especulação. A tropa vê que o chefe é difícil de enganar.`,
+           dito:'Perfeito. Evidência sólida, nenhuma dúvida. O X-9 está neutralizado.',neg:'Isso é o que diferencia o chefe do cangaceiro. Método.',
+           news:'Sem registros externos.'},
+          {t:'ca',l:'[CAUTELOSA]',txt:'"Manda os dois pra atividades separadas. Deixa o tempo resolver."',
+           fx:{heat:-3,resp:-10,temor:-10,sold:0},spec:'',
+           res:`O tempo não resolve. Uma semana depois, o conflito eclode em briga física. Dois soldados saem feridos. A indecisão custou mais do que a briga original.`,
+           dito:'A hesitação tem um preço. Precisamos agir com mais firmeza da próxima vez.',neg:'Chefe que não julga, tropa que não respeita.',
+           news:'Sem registros externos.'}
+        ]
+      }
+    ]
+  },
+
+  // ─── CAP II ───
+  {
+    num:2, title:'O SOM DOS MOTORES',
+    desc:'A facção agora é uma marca. Expanda para 3 regiões e estabeleça empresas de fachada.',
+    obj:'Dominar 3 regiões e 2 empresas de fachada',
+    events: [
+      {
+        id:'c2e1', loc:'COMPLEXO INDUSTRIAL — ENTRADA LESTE', img:'',
+        narr:`A facção cresceu. O nome começa a circular nos muros e nas conversas de esquina. Mas com o crescimento vem a atenção — da polícia e dos rivais. Dito aparece com notícia boa e notícia ruim.`,
+        npcs:[{t:'allied',s:'TENENTE DITO',txt:'Chefe, duas coisas. A boa: o Sindicato da Sombra mandou contato — querem conversar sobre rota. A ruim: a Polícia Federal abriu inquérito nas contas. Precisamos lavar o dinheiro antes que tracem.'}],
+        prompt:'// QUAL PRIORIDADE VOCÊ TRATA PRIMEIRO?',
+        choices:[
+          {t:'dp',l:'[SINDICATO]',txt:'"Primeiro o Sindicato. Parceria vale mais que qualquer inquérito."',
+           fx:{heat:5,resp:20,temor:5,sujo:20000},spec:'dip',
+           res:`A reunião com o Sindicato acontece num restaurante de fachada. O acordo é sofisticado: vocês dividem rota marítima, eles lavam parte do dinheiro pela rede de hotéis deles. Um upgrade de nível.`,
+           dito:'Agora temos proteção do Sindicato. O inquérito vai morrer por conta própria.',neg:'Esse é o passo que separa facção de organização.',
+           news:'Delegacia registra movimentação suspeita de capital em hotéis da orla.'},
+          {t:'es',l:'[LAVAGEM]',txt:'"Primeiro a lavagem. Sem dinheiro limpo, não tem negociação."',
+           fx:{heat:-10,resp:8,temor:0,sujo:-15000,limpo:10000},spec:'str',
+           res:`Três empresas de fachada registradas em quarenta e oito horas: pet shop, academia, distribuidora de bebidas. O capital circula. O inquérito perde trilha.`,
+           dito:'Capital limpo garantido. Agora podemos negociar com o Sindicato de posição sólida.',neg:'Sem rastro. Limpo como água mineral.',
+           news:'Novos CNPJs registrados na região. Receita Federal monitora.'},
+          {t:'ag',l:'[PRESSÃO]',txt:'"Manda recado pro delegado. Ele sabe o que acontece quando atrapalha."',
+           fx:{heat:25,resp:10,temor:30,sujo:-5000},spec:'san',
+           res:`O delegado recua. O inquérito é engavetado. Mas o preço é alto: agora você tem um inimigo institucional com memória longa e recursos maiores que os seus.`,
+           dito:'Funcionou por agora. Mas criamos um inimigo poderoso.',neg:'O delega engoliu. Mas esse tipo não esquece, chefe.',
+           news:'Delegado pede remoção após ameaças. Caso vai para Corregedoria.'},
+          {t:'ca',l:'[ESPERAR]',txt:'"Nenhum dos dois agora. Deixa a situação esfriar."',
+           fx:{heat:-5,resp:-5,temor:0},spec:'',
+           res:`A cautela tem um custo silencioso: o Sindicato espera por outra resposta. O inquérito avança dois degraus. A janela estava aberta — e você passou sem entrar.`,
+           dito:'Perdemos a janela do Sindicato. Difícil de recuperar.',neg:'O inquérito avançou. Precisamos agir logo.',
+           news:'Nenhum movimento registrado.'}
+        ]
+      },
+      {
+        id:'c2e2', loc:'TERMINAL PORTUÁRIO — DOCA 9', img:'caveirao.jpg',
+        narr:`A operação portuária cresceu além do esperado. Mas hoje tem complicação: uma viatura da Polícia Civil está parada na entrada da doca. Neguinho identificou dois agentes de civil fazendo reconhecimento.`,
+        npcs:[{t:'allied',s:'TENENTE NEGUINHO',txt:'Chefe, dois tiraninha de civil. Podem ser inteligência ou podem ser corruptos querendo molhar o bico. Ainda não sei qual dos dois. Temos vinte minutos antes do caminhão chegar.'}],
+        prompt:'// COMO VOCÊ LIDA COM OS AGENTES NA DOCA?',
+        choices:[
+          {t:'dp',l:'[CORRUPÇÃO]',txt:'"Manda um envelope. Qualquer policial na doca tem preço."',
+           fx:{heat:-12,resp:5,temor:5,sujo:-8000},spec:'dip',
+           res:`O envelope some. Os agentes passam mais meia hora, anotam mais nada e vão embora. O caminhão entra sem problema. Você acabou de comprar dois policiais — por enquanto.`,
+           dito:'Doca limpa. Mas agora eles sabem que a gente opera aqui.',neg:'Funcionou. Mas vira dependência. Vai precisar pagar toda semana.',
+           news:'Denúncia anônima aponta irregularidades no terminal portuário. Corregedoria investiga.'},
+          {t:'es',l:'[DESVIO]',txt:'"Muda o caminhão pra rota alternativa. Essa carga não entra hoje."',
+           fx:{heat:0,resp:8,temor:0,sujo:-3000},spec:'str',
+           res:`O motorista desvia. A carga fica num galpão por mais 48h, mas chega intacta. Os agentes saem sem ver nada. Você perdeu tempo mas não perdeu mercadoria nem liberdade.`,
+           dito:'Conservador, mas certeiro. A carga está salva.',neg:'Sempre melhor sair do campo quando o adversário não te viu.',
+           news:'Terminal portuário sem registro de incidentes.'},
+          {t:'ag',l:'[CONFRONTO]',txt:'"Se eles avançarem, Neguinho reage. A carga entra hoje."',
+           fx:{heat:35,resp:5,temor:20,sold:-2,sujo:25000},spec:'san',
+           res:`O pior cenário se concretiza. O confronto dura seis minutos. A carga entra, mas dois soldados ficam para trás e a doca agora tem sangue de policial. O estado inteiro vai se mover.`,
+           dito:'A carga entrou. Mas isso vai custar muito mais do que valeu.',neg:'Tivemos baixas, chefe. Precisamos nos mover do porto — agora.',
+           news:'CONFLITO NO PORTO: dois policiais baleados. Operação estadual deflagrada.'},
+          {t:'ca',l:'[RECUAR]',txt:'"Cancela tudo. Nenhum movimento hoje."',
+           fx:{heat:-8,resp:-3,temor:0},spec:'',
+           res:`A carga fica parada mais uma semana. Os agentes vão embora sem ver nada. Você preservou o ativo mais importante — a rota em si.`,
+           dito:'Correto. A rota continua limpa. Podemos usar amanhã.',neg:'Sem produto, sem dinheiro hoje. Mas tamo vivos.',
+           news:'Nenhum incidente no porto.'}
+        ]
+      },
+      {
+        id:'c2e3', loc:'MANSÃO DO SINDICATO — ZONA SUL', img:'',
+        narr:`A reunião com o Sindicato da Sombra acontece em sua sede real: uma mansão com jardins perfeitos e seguranças de terno. O chefe do Sindicato, Coronel Branco, senta à sua frente com um charuto e um mapa.`,
+        npcs:[
+          {t:'enemy',s:'CORONEL BRANCO',txt:'Ouvi que você é ambicioso. Gosto de ambição — quando é controlada. Tenho três rotas disponíveis. Quero um parceiro que pense em décadas, não em semanas.'},
+          {t:'allied',s:'TENENTE DITO',txt:'Chefe, cuidado. O Coronel Branco já eliminou quatro parceiros anteriores quando eles cresceram demais.'}
+        ],
+        prompt:'// COMO VOCÊ SE POSICIONA NA NEGOCIAÇÃO COM O SINDICATO?',
+        choices:[
+          {t:'dp',l:'[ALIANÇA]',txt:'"Parceiro de longo prazo. Dividimos risco e dividimos lucro."',
+           fx:{heat:-5,resp:25,temor:5,sujo:30000},spec:'dip',
+           res:`O Coronel Branco sorri pela primeira vez. A parceria é assinada de forma não convencional — um aperto de mão e duas testemunhas armadas. Você agora tem o Sindicato como escudo e como rota.`,
+           dito:'Essa parceria nos protege de 80% da pressão policial. Jogada mestra.',neg:'Eu não confiaria nesse homem. Mas os resultados falam por si.',
+           news:'Empresas ligadas ao Sindicato da Sombra registram crescimento atípico.'},
+          {t:'es',l:'[NEGOCIAÇÃO]',txt:'"Quero as três rotas, mas com cláusula de saída. Sem aprisionamento."',
+           fx:{heat:0,resp:15,temor:10,sujo:15000},spec:'str',
+           res:`O Coronel hesita. Ninguém negocia cláusula de saída com ele. Mas você fundamenta bem — e ele respeita. O acordo fica menor, mas você mantém autonomia.`,
+           dito:'Você negociou com o mais poderoso da cidade e saiu de pé. Impressionante.',neg:'O Coronel foi testado e respeitou. Isso vale.',
+           news:'Reuniões em mansões da Zona Sul geram especulações nos corredores do Ministério.'},
+          {t:'ag',l:'[CONFRONTO]',txt:'"Não preciso do Sindicato. Temos nossas próprias rotas."',
+           fx:{heat:10,resp:-5,temor:20},spec:'san',
+           res:`O Coronel Branco fecha o charuto lentamente. "Interessante", ele diz. E você saiu da reunião com um inimigo de alta potência — e uma história para contar.`,
+           dito:'Acabamos de recusar a maior proteção disponível na cidade.',neg:'Coragem. Ou insanidade. Ainda não sei qual.',
+           news:'Rumores de tensão entre grupos consolidados na Zona Sul.'},
+          {t:'ca',l:'[OBSERVAR]',txt:'"Deixa eu pensar. Não decido hoje."',
+           fx:{heat:-3,resp:-8,temor:0},spec:'',
+           res:`O Coronel não gosta. "Quem hesita, perde." Você saiu da reunião sem acordo — e sem inimigo. Mas a janela vai fechar em breve.`,
+           dito:'Você comprou tempo. Mas o Coronel não vai esperar muito.',neg:'Janela aberta ainda. Mas não por muito tempo.',
+           news:'Sem movimentações relevantes na Zona Sul.'}
+        ]
+      },
+      {
+        id:'c2e4', loc:'FAVELA DO PINHÃO — ENTRADA PRINCIPAL', img:'caveirao.jpg',
+        narr:`O Caveirão da PM parou na entrada da Favela do Pinhão às 06h da manhã. Operação de grande escala. Neguinho está no rádio, voz baixa e rápida.`,
+        npcs:[{t:'allied',s:'TENENTE NEGUINHO',txt:'Chefe. Contei dezesseis viaturas, dois blindados, helicóptero acima. Isso não é batida rotineira. Alguém delatou. Precisamos de decisão agora.'}],
+        prompt:'// CAVEIRÃO NA PORTA. QUAL O PROTOCOLO?',
+        choices:[
+          {t:'es',l:'[PROTOCOLO FANTASMA]',txt:'"Protocolo Fantasma. Destrói tudo, some pela rota B."',
+           fx:{heat:5,resp:10,temor:5,sujo:-10000},spec:'str',
+           res:`Em vinte minutos, nada existe. Dispositivos destruídos, produto disperso, pessoal evaporado pelas rotas alternativas. A PM entra e encontra um apartamento vazio com cheiro de café.`,
+           dito:'Execução perfeita. Perdemos material mas ninguém foi preso.',neg:'Fantasma ativado. Eles chegaram tarde. Sempre chegam tarde.',
+           news:'Operação policial na Favela do Pinhão não localiza alvos. PM admite frustração.'},
+          {t:'dp',l:'[NEGOCIAR SAÍDA]',txt:'"Liga pro delegado de plantão. Temos um acordo com ele."',
+           fx:{heat:-15,resp:8,temor:0,sujo:-12000},spec:'dip',
+           res:`O delegado atende. A operação "muda de alvo" — tecnicamente. A Favela do Pinhão recebe uma batida de menor escala que não encontra nada de relevante. Custou caro, mas funcionou.`,
+           dito:'A operação foi redirecionada. Nossa cota política foi bem investida.',neg:'Cada vez que fazemos isso, ficamos mais expostos. Mas por agora, funcionou.',
+           news:'PM muda foco de operação no último momento. Imprensa questiona motivos.'},
+          {t:'ag',l:'[RESISTIR]',txt:'"Não arregamos. Manda os soldados pra resistência."',
+           fx:{heat:50,resp:-10,temor:15,sold:-5,sujo:-20000},spec:'san',
+           res:`O confronto dura duas horas. Seis soldados presos, dois feridos, um morto. O material foi apreendido. A Favela do Pinhão está sob controle policial por tempo indeterminado.`,
+           dito:'Perdemos demais. O território vai demorar meses pra se recuperar.',neg:'Cinco homens na cadeia. Precisamos de um advogado — e rápido.',
+           news:'OPERAÇÃO POLICIAL: 6 presos, grande apreensão de material. Governador parabeniza PM.'},
+          {t:'ca',l:'[RENDIÇÃO ESTRATÉGICA]',txt:'"Quem não tem nada, não perde nada. Entrega-se os menores."',
+           fx:{heat:-20,resp:-15,temor:-10,sold:-2},spec:'',
+           res:`Dois soldados menores se entregam com histórico limpo. Saem no mesmo dia com fiança. A operação encerra sem grande apreensão — mas o custo em moral da tropa é real.`,
+           dito:'Inteligente mas desgastante. A tropa precisa ver que não somos descartáveis.',neg:'Dois meninos foram. Isso vai gerar rancor interno.',
+           news:'PM registra prisões menores. Operação considerada parcialmente bem-sucedida.'}
+        ]
+      },
+      {
+        id:'c2e5', loc:'QG EXPANDIDO — GALPÃO INDUSTRIAL', img:'',
+        narr:`Capítulo II chegando ao fim. O território está maior, as rotas abertas, o dinheiro circulando. Mas uma escolha estrutural define o que vem a seguir: verticalizar o poder ou horizontalizar o controle.`,
+        npcs:[
+          {t:'allied',s:'TENENTE DITO',txt:'Chefe, chegou a hora de definir a estrutura permanente. Centralizado, tudo passa por você. Distribuído, cada tenente tem autonomia. Cada modelo tem risco diferente.'},
+          {t:'allied',s:'TENENTE NEGUINHO',txt:'Eu voto centralizado. Mas sou suspeito — significa que fico com mais poder.'}
+        ],
+        prompt:'// COMO VOCÊ ESTRUTURA A ORGANIZAÇÃO PARA O CAPÍTULO FINAL?',
+        choices:[
+          {t:'ag',l:'[CENTRALIZADO]',txt:'"Tudo passa por mim. Comando único, sem exceção."',
+           fx:{heat:5,resp:20,temor:15,sold:3,sujo:-15000},spec:'san',
+           res:`A estrutura centralizada é erigida. Você é o ponto de convergência de todas as decisões. Mais poder, mais risco pessoal — mas controle total. O Porto Seco aguarda.`,
+           dito:'Você está no centro de tudo. O que acontece com você, acontece com a organização.',neg:'Centralizado. Do jeito que eu gosto. Vamos pro Porto Seco, chefe.',
+           news:'Inteligência policial detecta estrutura hierárquica rígida em organização criminosa.'},
+          {t:'dp',l:'[DISTRIBUÍDO]',txt:'"Cada tenente cuida do seu setor. Eu coordeno o todo."',
+           fx:{heat:-5,resp:15,temor:5,sold:5,limpo:10000},spec:'dip',
+           res:`A descentralização fortalece o grupo como um todo. Se um nó cair, os outros continuam. Você perde controle absoluto mas ganha resiliência. A organização está pronta para o Porto Seco.`,
+           dito:'Modelo resiliente. Mesmo que nos ataquem, a estrutura sobrevive.',neg:'Deu mais autonomia pra mim. Gostei. Pro Porto Seco então.',
+           news:'Autoridades notam dificuldade de desarticular nova estrutura criminal fragmentada.'},
+          {t:'es',l:'[HÍBRIDO]',txt:'"Centro para decisões maiores, autonomia para operações locais."',
+           fx:{heat:0,resp:18,temor:10,sold:4,sujo:5000},spec:'str',
+           res:`O modelo híbrido é o mais complexo de implementar — mas o mais poderoso quando funciona. Cada tenente age dentro de parâmetros claros, você decide o macro. Porto Seco vai exigir o melhor dos dois mundos.`,
+           dito:'Modelo perfeito no papel. Agora o desafio é executar. Porto Seco vai testar isso.',neg:'Complexo. Mas você nunca foi de fazer as coisas fáceis.',
+           news:'Inteligência policial confusa com estrutura de organização criminosa atípica.'},
+          {t:'ca',l:'[MANTER COMO ESTÁ]',txt:'"Ainda não estamos prontos para formalizar. Segue informal."',
+           fx:{heat:-8,resp:-5,temor:0},spec:'',
+           res:`A informalidade protege mas limita. A organização continua fluida — mais difícil de derrubar, mais difícil de escalar. O Porto Seco vai cobrar essa indefinição.`,
+           dito:'A indefinição tem custo. No Porto Seco, vamos sentir isso.',neg:'Tudo bem, chefe. Mas no Porto Seco a coisa é diferente. Lá vai exigir mais de nós.',
+           news:'Sem registros estruturais relevantes.'}
+        ]
+      }
+    ]
+  },
+
+  // ─── CAP III — PORTO SECO ───
+  {
+    num:3, title:'PORTO SECO',
+    desc:'A operação final. O Porto Seco é o maior hub logístico do território — quem controla o Porto, controla tudo. Mas o Estado também sabe disso.',
+    obj:'Tomar o controle do Porto Seco',
+    events: [
+      {
+        id:'c3e1', loc:'PORTO SECO — PERÍMETRO EXTERNO', img:'baque.jpg',
+        narr:`O Porto Seco. Um complexo de quarenta galpões, doze câmeras, quatro equipes de segurança privada e — segundo Dito — uma operação do Cartel dos Sóis que já está consolidada aqui há dois anos. A névoa da madrugada encobre tudo. Você está a trezentos metros da entrada.`,
+        npcs:[
+          {t:'allied',s:'TENENTE DITO',txt:'Chefe, levei três semanas mapeando esse lugar. Temos dois caminhos: invasão em massa pela entrada principal, ou sabotagem da logística antes de entrar. Cada um tem um custo diferente.'},
+          {t:'allied',s:'TENENTE NEGUINHO',txt:'Eu prefiro o barulho. Mas sei que o barulho tem consequência. Dito tá certo — precisamos da sua decisão.'}
+        ],
+        prompt:'// O PORTO SECO ESTÁ NA MIRA. QUAL É A ESTRATÉGIA FINAL?',
+        choices:[
+          {t:'ag',l:'[GUERRA TOTAL]',txt:'"Invasão em massa. Chegamos com tudo e tomamos em uma noite."',
+           fx:{heat:35,resp:30,temor:40,sold:-8,sujo:-30000},spec:'san',
+           res:`A invasão começa às 02h17. Dezesseis soldados pela frente, oito pelos fundos. O Cartel dos Sóis reagiu — o confronto durou quarenta e dois minutos. Pesado. Mas ao amanhecer, a bandeira do Domínio Nort está hasteada sobre o Galpão 1. O Porto Seco é seu — ao custo de sangue e atenção máxima do Estado.`,
+           dito:'O Porto está sob controle. Mas pagamos um preço alto. A PM vai estar aqui amanhã com reforço federal.',neg:'Ganhamos o Porto. Os que ficaram de pé vão contar isso pros filhos. Mas precisamos nos blindar — agora.',
+           news:'CONFLITO NO PORTO SECO: confronto violento entre organizações criminosas. Forças de segurança em estado de alerta máximo. Ministério da Justiça acionado.'},
+          {t:'es',l:'[SABOTAGEM LOGÍSTICA]',txt:'"Sabotagem primeiro. Derrubamos a operação deles por dentro antes de entrar."',
+           fx:{heat:15,resp:25,temor:20,sold:-2,sujo:-20000,limpo:15000},spec:'str',
+           res:`Três noites de operação cirúrgica: o sistema de câmeras do Porto é hackeado, os caminhões do Cartel dos Sóis são interceptados em rotas alternativas, dois motoristas viram informantes. Na quarta noite, quando você entra, o Porto Seco está vazio de resistência. A tomada é silenciosa — e completa. O Cartel dos Sóis só descobre uma semana depois.`,
+           dito:'Execução de manual. Dominamos sem disparar um único tiro dentro do perímetro. Isso é poder real.',neg:'Eu preferia o barulho. Mas isso... isso foi bonito de ver. O Porto é nosso, chefe.',
+           news:'Porto Seco registra irregularidades logísticas. Cartel dos Sóis perde controle de operação regional sem explicação aparente.'}
+        ]
+      },
+      {
+        id:'c3e2', loc:'PORTO SECO — GALPÃO CENTRAL', img:'baque.jpg',
+        narr:`O Porto Seco agora é território do Domínio Nort. Mas consolidar é diferente de tomar. O Cartel dos Sóis vai reagir. O Estado vai reagir. Você tem uma janela de quarenta e oito horas para fortalecer a posição antes que o contraataque chegue.`,
+        npcs:[
+          {t:'allied',s:'TENENTE DITO',txt:'Chefe, temos dois movimentos críticos: podemos fortalecer a defesa do Porto ou usar o momentum para expandir para o território adjacente enquanto os rivais ainda estão atordoados.'},
+          {t:'enemy',s:'CONTATO DO CARTEL DOS SÓIS',txt:'Você sabe quem somos. E sabe que isso não fica assim. Mas podemos conversar — se você quiser ser inteligente.'}
+        ],
+        prompt:'// PORTO SECO CONQUISTADO. COMO VOCÊ CONSOLIDA O DOMÍNIO?',
+        choices:[
+          {t:'dp',l:'[NEGOCIAR COM O CARTEL]',txt:'"Aceita a conversa com o Cartel. Acordo é melhor que guerra continuada."',
+           fx:{heat:-15,resp:20,temor:10,sujo:40000},spec:'dip',
+           res:`A negociação é tensa mas produtiva. O Cartel dos Sóis aceita um acordo de coexistência: eles mantêm as rotas marítimas, você controla o Porto Seco terrestre. A paz tem preço — mas o preço é menor que a guerra.`,
+           dito:'Acordo estratégico de alto nível. Você transformou um inimigo em parceiro relutante.',neg:'Eu teria preferido a guerra. Mas esse acordo vai durar mais.',
+           news:'Analistas de segurança notam estabilização atípica nas organizações criminosas do porto.'},
+          {t:'ag',l:'[EXPANSÃO IMEDIATA]',txt:'"Enquanto estão atordoados, avança para o Setor Industrial adjacente."',
+           fx:{heat:25,resp:25,temor:30,sold:-4,sujo:20000},spec:'san',
+           res:`O momentum é aproveitado. Em quarenta e oito horas, o Setor Industrial cai sob controle. O Domínio Nort agora controla o maior corredor logístico da cidade. O Estado está em alerta máximo — mas o território é seu.`,
+           dito:'Expansão máxima em mínimo tempo. Mas estamos sobreesticados. Precisamos consolidar.',neg:'Tomamos tudo. Agora segura tudo.',
+           news:'ALERTA DE SEGURANÇA: organização criminosa expande controle para corredor logístico estratégico.'},
+          {t:'es',l:'[BLINDAGEM DO PORTO]',txt:'"Fortifica o Porto. Torna ele inexpugnável antes de qualquer outro movimento."',
+           fx:{heat:5,resp:18,temor:25,sold:3,sujo:-25000},spec:'str',
+           res:`Quarenta e oito horas de trabalho ininterrupto: câmeras substituídas, rotas de fuga mapeadas, dois snipes posicionados, acordo com a segurança privada local. O Porto Seco está blindado. Quem tentar retomar vai pagar um preço que não vale.`,
+           dito:'Agora temos uma fortaleza. O Porto Seco vai resistir ao que vier.',neg:'Esse Porto tá fechado. Pode vir com tudo.',
+           news:'Movimentação intensa no Porto Seco. Autoridades tentam identificar nova estrutura de controle.'},
+          {t:'ca',l:'[MANTER POSIÇÃO]',txt:'"Segura o Porto. Sem movimentos por enquanto. Deixa o pó baixar."',
+           fx:{heat:-10,resp:10,temor:5,limpo:20000},spec:'',
+           res:`A discrição funciona. O Cartel dos Sóis e o Estado não conseguem confirmar quem assumiu o Porto. Em duas semanas, a operação está rodando em silêncio, gerando capital limpo.`,
+           dito:'A paciência está gerando resultado. O Porto opera sem ser desafiado.',neg:'Silêncio é poder às vezes. Tamos crescendo por baixo do radar.',
+           news:'Porto Seco opera normalmente segundo fontes oficiais. Análise aponta inconsistências.'}
+        ]
+      },
+      {
+        id:'c3e3', loc:'PORTO SECO — SALA DE COMANDO', img:'baque.jpg',
+        narr:`O Porto Seco está sob seu controle. A decisão final define seu legado: que tipo de organização você construiu, e o que o Domínio Nort representa para as ruas. Dito e Neguinho estão de pé à sua frente, esperando a última ordem.`,
+        npcs:[
+          {t:'allied',s:'TENENTE DITO',txt:'Chefe. As ruas estão falando. O nome chegou longe. Agora é a hora de definir o que fazemos com esse poder — e o que deixamos como herança.'},
+          {t:'allied',s:'TENENTE NEGUINHO',txt:'Tudo que construímos, construímos juntos. O que o chefe decidir, a tropa segue. Até o fim.'}
+        ],
+        prompt:'// O DOMÍNIO ESTÁ ESTABELECIDO. QUAL É O SEU LEGADO?',
+        choices:[
+          {t:'dp',l:'[LEGADO INSTITUCIONAL]',txt:'"Transformamos o Domínio numa organização que dura gerações."',
+           fx:{heat:-20,resp:30,temor:5,limpo:50000,sold:5},spec:'dip',
+           res:`Você escolhe a transformação. O Domínio Nort começa a migrar para negócios legítimos — construtoras, transporte, imóveis. O poder continua, mas agora tem endereço, CNPJ e advogado. Em dez anos, ninguém vai saber onde começou.`,
+           dito:'Esse é o maior movimento que já fizemos. De facção a instituição. Impossível de derrubar.',neg:'Tudo limpo no papel. Mas as ruas ainda sabem quem manda. E isso é o que importa.',
+           news:'Novo conglomerado empresarial surge ligado ao Porto Seco. Analistas intrigados com velocidade de crescimento.'},
+          {t:'ag',l:'[SUPREMACIA TERRITORIAL]',txt:'"O Domínio expande. Todas as zonas, todos os setores, tudo nosso."',
+           fx:{heat:30,resp:20,temor:50,sold:-5,sujo:80000},spec:'san',
+           res:`A expansão é total e implacável. Em noventa dias, o Domínio Nort controla 70% do território urbano. O Estado declara operação especial — mas as ruas já sabem quem manda. Você não governa nas sombras. Você governa.`,
+           dito:'Controle absoluto. Mas absolutamente exposto. O Estado vai concentrar tudo contra nós.',neg:'Finalmente. Sem meias palavras. O Domínio é o Domínio — e todos sabem.',
+           news:'ESTADO DE EMERGÊNCIA: organização criminosa atinge nível de controle territorial sem precedente. Forças federais mobilizadas.'},
+          {t:'es',l:'[RETIRADA ESTRATÉGICA]',txt:'"O Porto nos deu o que precisávamos. É hora de desaparecer no lucro."',
+           fx:{heat:-30,resp:15,temor:-10,limpo:100000},spec:'str',
+           res:`A maior jogada é a invisibilidade. Você distribui o capital, desmonta as estruturas visíveis, e some. Em seis meses, o Domínio Nort é lenda. O dinheiro está em trinta países. O nome virou mito — e mito não pode ser preso.`,
+           dito:'A estratégia mais difícil de todas: desaparecer por vontade própria quando está no auge. Respeito.',neg:'Eu nunca entenderia isso completamente. Mas você sempre soube o que eu não sei.',
+           news:'Organização criminosa parece se dissolver misteriosamente após controle do Porto Seco. Investigações sem resultado.'}
+        ]
+      }
+    ]
+  }
+];
+
+// ─── flatten events ───
+let ALL_EVENTS = [];
+CHAPTERS.forEach(ch => ch.events.forEach(ev => { ev.chapterNum=ch.num; ALL_EVENTS.push(ev); }));
+
+// ═══ UI HELPERS ═══
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function openModal(id){ document.getElementById(id).classList.add('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+
+// ═══ FORM SELECTION ═══
+function selO(v,el){ selOrigin=v; document.querySelectorAll('.ocard').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); checkConfirm(); }
+function selF(v,el){ selFaction=v; document.querySelectorAll('.fcard').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); checkConfirm(); }
+function selR(v,el){ selRegion=v; document.querySelectorAll('.rcard').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); checkConfirm(); }
+function checkConfirm(){
+  const ok=selOrigin&&selFaction&&selRegion&&document.getElementById('vInput').value.trim().length>0;
+  document.getElementById('bConfirm').disabled=!ok;
+}
+document.getElementById('vInput').addEventListener('input',checkConfirm);
+
+function goCreate(){ showScreen('s-create'); }
+
+// ═══ SAVE / LOAD ═══
+const SAVE_KEY2='dnort_v3';
+function save(){ try{ localStorage.setItem(SAVE_KEY2,JSON.stringify({G,eventIdx,cycle,cycleHour,specPoints})); }catch(e){} }
+function checkSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY2);
+    if(raw){ const d=JSON.parse(raw);
+      if(d&&d.G&&d.G.vulgo){ document.getElementById('bRetomar').disabled=false; document.getElementById('bQueimar').disabled=false; }
+    }
+  }catch(e){}
+}
+function retomar(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY2);
+    if(!raw)return; const d=JSON.parse(raw);
+    G=d.G; eventIdx=d.eventIdx||0; cycle=d.cycle||'dia'; cycleHour=d.cycleHour||6; specPoints=d.specPoints||{dip:0,san:0,str:0};
+    showScreen('s-game');
+    document.getElementById('hName').textContent=G.vulgo;
+    renderHUD(); renderSidebar();
+    loadEvent(eventIdx);
+  }catch(e){ alert('Erro ao carregar save.'); }
+}
+function queimarArq(){ localStorage.removeItem(SAVE_KEY2); location.reload(); }
+
+// ═══ START GAME ═══
+function startGame(){
+  const vulgo=document.getElementById('vInput').value.trim().toUpperCase();
+  if(!vulgo||!selOrigin||!selFaction||!selRegion)return;
+  const orig=ORIGINS[selOrigin];
+  const fb=FACTION_BONUS[selFaction];
+  const rm=REGION_MOD[selRegion]||1;
+  G={
+    vulgo, origin:selOrigin, faction:selFaction, region:selRegion,
+    heat:orig.heat*rm, resp:orig.resp, temor:orig.temor,
+    sold:orig.sold+fb.soldBonus, sujo:orig.sujo, limpo:orig.limpo,
+    heatMult:(orig.hm||1)*(1+(fb.heatMod||0))*rm,
+    arsenal:[...orig.arsenal], rivals:JSON.parse(JSON.stringify(RIVALS_BASE)),
+    fachadas:0, chronicle:[], boughtWeapons:[]
+  };
+  specPoints={dip:0,san:0,str:0};
+  eventIdx=0; cycle='dia'; cycleHour=6;
+  showScreen('s-game');
+  document.getElementById('hName').textContent=G.vulgo;
+  renderHUD(); renderSidebar();
+  loadEvent(0);
+  save();
+}
+
+// ═══ TYPEWRITER ═══
+function typewriter(el, html, speed=18, cb){
+  // Strip to plain text for typing, then restore HTML tags
+  const stripped=html.replace(/<[^>]*>/g,'');
+  let i=0;
+  const cursor=document.createElement('span');
+  cursor.className='tw-cursor';
+  el.textContent='';
+  el.appendChild(cursor);
+  function tick(){
+    if(i<stripped.length){
+      el.insertBefore(document.createTextNode(stripped[i]),cursor);
+      if(stripped[i].trim()&&stripped[i]!==' ') sndType();
+      i++;
+      setTimeout(tick,speed+(Math.random()>0.9?speed*3:0));
+    } else {
+      cursor.remove();
+      el.innerHTML=html;
+      if(cb)cb();
+    }
+  }
+  tick();
+}
+
+// ═══ HUD ═══
+function renderHUD(){
+  sv('vHeat',Math.round(G.heat)+'%','bHeat',G.heat,100);
+  sv('vResp',Math.round(G.resp),'bResp',G.resp,100);
+  sv('vTemor',Math.round(G.temor),'bTemor',G.temor,100);
+  sv('vSold',Math.round(G.sold),'bSold',G.sold,30);
+  const sm=Math.min(G.sujo,99999); document.getElementById('vSujo').textContent='R$'+fmtK(sm);
+  document.getElementById('bSujo').style.width=Math.min(100,sm/1000)+'%';
+  const lm=Math.min(G.limpo,99999); document.getElementById('vLimpo').textContent='R$'+fmtK(lm);
+  document.getElementById('bLimpo').style.width=Math.min(100,lm/1000)+'%';
+  document.getElementById('heatOverlay').classList.toggle('on',G.heat>=50);
+  if(G.heat>=80){ document.getElementById('s-game').classList.add('shake'); setTimeout(()=>document.getElementById('s-game').classList.remove('shake'),400); }
+  document.getElementById('specDip').style.width=Math.min(100,specPoints.dip*10)+'%';
+  document.getElementById('specSan').style.width=Math.min(100,specPoints.san*10)+'%';
+  document.getElementById('specStr').style.width=Math.min(100,specPoints.str*10)+'%';
+  cycleHour=(cycleHour+1)%24;
+  cycle=cycleHour>=6&&cycleHour<20?'dia':'noite';
+  const cel=document.getElementById('hCycle');
+  cel.textContent=(cycle==='dia'?'DIA':'NOITE')+` — ${String(cycleHour).padStart(2,'0')}:00`;
+  cel.className=cycle==='dia'?'cycle-day':'cycle-night';
+}
+function sv(vid,val,bid,v,max){
+  const el=document.getElementById(vid); if(el)el.textContent=val;
+  const bar=document.getElementById(bid); if(bar)bar.style.width=Math.min(100,Math.max(0,(v/max)*100))+'%';
+}
+function fmtK(v){ return v>=1000?(v/1000).toFixed(1)+'k':v.toString(); }
+function fmt(v){ return 'R$ '+Math.abs(v).toLocaleString('pt-BR'); }
+
+// ═══ SIDEBAR ═══
+function renderSidebar(){
+  const al=document.getElementById('arsenalList'); al.innerHTML='';
+  const aCounts={};
+  G.arsenal.forEach(a=>aCounts[a]=(aCounts[a]||0)+1);
+  Object.entries(aCounts).forEach(([name,qty])=>{
+    const d=document.createElement('div'); d.className='inv-item';
+    d.innerHTML=`<span class="inv-name">${name}</span><span class="inv-qty">${qty}</span>`;
+    al.appendChild(d);
+  });
+  if(G.arsenal.length===0){ al.innerHTML='<div style="font-size:10px;color:var(--smoke);padding:6px 0;">Nenhum armamento registrado</div>'; }
+  const rl=document.getElementById('rivalList'); rl.innerHTML='';
+  G.rivals.forEach(r=>{
+    const d=document.createElement('div'); d.className='rival-row';
+    const statusLabels={paz:'Paz Armada',tregua:'Trégua',alianca:'Aliança',guerra:'Guerra Total'};
+    d.innerHTML=`<div class="rival-dot ${r.status}"></div><div class="rival-name">${r.name}</div><div class="rival-status">${statusLabels[r.status]||r.status}</div>`;
+    rl.appendChild(d);
+  });
+}
+
+// ═══ MERCADO NEGRO ═══
+function openMarket(){
+  const container=document.getElementById('marketItems');
+  container.innerHTML='';
+  MARKET_ITEMS.forEach(item=>{
+    const chap=ALL_EVENTS[eventIdx]?ALL_EVENTS[eventIdx].chapterNum:1;
+    const respOk=G.resp>=item.reqResp;
+    const chapOk=chap>=item.reqChap;
+    const alreadyBought=G.boughtWeapons&&G.boughtWeapons.includes(item.id);
+    const canBuy=respOk&&chapOk&&!alreadyBought&&(G.sujo>=item.price||G.limpo>=item.price);
+    const div=document.createElement('div');
+    div.className='mkt-item';
+    const reqLabel=respOk&&chapOk
+      ? `<span class="mkt-item-req ok">✓ DESBLOQUEADO — RESPEITO ${item.reqResp}+ / CAP.${item.reqChap}+</span>`
+      : `<span class="mkt-item-req locked">✕ BLOQUEADO — Requer Respeito ${item.reqResp}+ e Cap.${item.reqChap}+ (atual: ${Math.round(G.resp)} / Cap.${chap})</span>`;
+    div.innerHTML=`
+      <div class="mkt-item-name">${item.name}</div>
+      <div class="mkt-item-desc">${item.desc}</div>
+      ${reqLabel}
+      <div class="mkt-item-req" style="color:var(--gold-dim);margin-top:3px;">Preço: ${fmt(item.price)}</div>
+      <button class="mkt-item-buy" ${canBuy?'':'disabled'} onclick="buyWeapon('${item.id}')">${alreadyBought?'JÁ ADQUIRIDO':canBuy?'COMPRAR':'INDISPONÍVEL'}</button>
+    `;
+    container.appendChild(div);
+  });
+  openModal('mMarket');
+}
+
+function buyWeapon(id){
+  const item=MARKET_ITEMS.find(m=>m.id===id);
+  if(!item)return;
+  if(!G.boughtWeapons)G.boughtWeapons=[];
+  if(G.boughtWeapons.includes(id))return;
+  const total=G.sujo+G.limpo;
+  if(total<item.price){ addMsg('system',null,'⚠ Capital insuficiente para esta aquisição.'); return; }
+  if(G.sujo>=item.price) G.sujo-=item.price; else { const resto=item.price-G.sujo; G.sujo=0; G.limpo-=resto; }
+  G.boughtWeapons.push(id);
+  if(item.effect.arsenal) G.arsenal.push(item.effect.arsenal);
+  if(item.effect.resp) G.resp=clamp(G.resp+item.effect.resp,0,100);
+  if(item.effect.temor) G.temor=clamp(G.temor+item.effect.temor,0,100);
+  if(item.effect.heat) G.heat=clamp(G.heat+item.effect.heat,0,100);
+  if(item.effect.sold) G.sold=clamp(G.sold+item.effect.sold,0,50);
+  renderHUD(); renderSidebar();
+  save();
+  closeModal('mMarket');
+  addMsg('system',null,`◈ MERCADO NEGRO: ${item.name} adquirido. ${item.effect.arsenal?item.effect.arsenal+' adicionado ao arsenal.':''}`);
+}
+
+// ═══ LOG ═══
+function addMsg(tipo,sender,txt,fx){
+  const log=document.getElementById('dlog');
+  const m=document.createElement('div'); m.className='msg '+tipo;
+  let sEl=sender?`<div class="msg-sender">${sender}</div>`:'';
+  let fEl='';
+  if(fx){
+    const tags=[];
+    if(fx.heat&&fx.heat!==0) tags.push(`<span class="etag ${fx.heat>0?'dn':'up'}">HEAT ${fx.heat>0?'+':''}${Math.round(fx.heat*G.heatMult)}%</span>`);
+    if(fx.resp&&fx.resp!==0) tags.push(`<span class="etag ${fx.resp>0?'up':'dn'}">RESPEITO ${fx.resp>0?'+':''}${fx.resp}</span>`);
+    if(fx.temor&&fx.temor!==0) tags.push(`<span class="etag ${fx.temor>0?'up':'dn'}">TEMOR ${fx.temor>0?'+':''}${fx.temor}</span>`);
+    if(fx.sold&&fx.sold!==0) tags.push(`<span class="etag ${fx.sold>0?'up':'dn'}">SOLDADOS ${fx.sold>0?'+':''}${fx.sold}</span>`);
+    if(fx.sujo&&fx.sujo!==0) tags.push(`<span class="etag ${fx.sujo>0?'up':'dn'}">SUJO ${fx.sujo>0?'+':''} ${fmt(fx.sujo)}</span>`);
+    if(fx.limpo&&fx.limpo!==0) tags.push(`<span class="etag ${fx.limpo>0?'up':'dn'}">LIMPO ${fx.limpo>0?'+':''} ${fmt(fx.limpo)}</span>`);
+    if(tags.length) fEl=`<div style="margin-top:7px">${tags.join('')}</div>`;
+  }
+  const bubble=document.createElement('div');
+  bubble.className='msg-bubble';
+  m.innerHTML=sEl;
+  m.appendChild(bubble);
+  if(fEl){ const fxDiv=document.createElement('div'); fxDiv.innerHTML=fEl; m.appendChild(fxDiv); }
+  log.appendChild(m);
+  log.scrollTop=log.scrollHeight;
+  // Typewriter only on narrator, allied, enemy messages (not system/player)
+  if(tipo==='narrator'||tipo==='allied'||tipo==='enemy'){
+    typewriter(bubble, txt, tipo==='narrator'?16:20);
+  } else {
+    bubble.innerHTML=txt;
+  }
+  log.scrollTop=log.scrollHeight;
+}
+
+function addSep(gold=false){
+  const log=document.getElementById('dlog');
+  const d=document.createElement('div'); d.className='msep'+(gold?' gold':'');
+  log.appendChild(d);
+}
+
+// ═══ CHAPTER CARD ═══
+function getCurrentChapter(){ const ev=ALL_EVENTS[eventIdx]; if(!ev)return null; return CHAPTERS.find(c=>c.num===ev.chapterNum)||null; }
+function showChapterCard(ch){
+  const log=document.getElementById('dlog');
+  const d=document.createElement('div'); d.className='chap-card';
+  d.innerHTML=`<div class="chap-num">// CAPÍTULO ${ch.num}</div><div class="chap-title">${ch.title}</div><div class="chap-desc">${ch.desc}</div>`;
+  log.appendChild(d); log.scrollTop=log.scrollHeight;
+}
+
+// ═══ OBJECTIVE ═══
+function updateObjective(ev){
+  const ch=CHAPTERS.find(c=>c.num===ev.chapterNum);
+  if(!ch)return;
+  document.getElementById('objTxt').textContent=ch.obj;
+  const evInCh=ch.events.indexOf(ev)+1;
+  document.getElementById('objProg').textContent=`${evInCh}/${ch.events.length}`;
+  document.getElementById('hChap').textContent=`CAP.${ch.num} — ${ch.title}`;
+}
+
+// ═══ SCENE IMAGE ═══
+function updateSceneImage(img){
+  const el=document.getElementById('sceneImg');
+  if(img){
+    el.src='./'+img;
+    el.classList.add('visible');
+  } else {
+    el.classList.remove('visible');
+    el.src='';
+  }
+}
+
+// ═══ LOAD EVENT ═══
+function loadEvent(idx){
+  if(idx>=ALL_EVENTS.length){ endGame(); return; }
+  const ev=ALL_EVENTS[idx];
+  const prevEv=idx>0?ALL_EVENTS[idx-1]:null;
+  if(!prevEv||prevEv.chapterNum!==ev.chapterNum){
+    if(idx>0) addSep(true);
+    const ch=CHAPTERS.find(c=>c.num===ev.chapterNum);
+    if(ch) setTimeout(()=>showChapterCard(ch),200);
+  } else {
+    addSep();
+  }
+  document.getElementById('gLoc').textContent=ev.loc;
+  updateObjective(ev);
+  updateSceneImage(ev.img||'');
+  if(cycle==='noite') addMsg('system',null,'◈ CICLO NOTURNO: Velocidade de venda +30% | Visibilidade policial +100%');
+  setTimeout(()=>{
+    addMsg('narrator',null,ev.narr);
+    let delay=800;
+    ev.npcs.forEach(n=>{ setTimeout(()=>addMsg(n.t,n.s,n.txt),delay); delay+=900; });
+    setTimeout(()=>renderChoices(ev),delay+400);
+  },300);
+}
+
+// ═══ CHOICES ═══
+function renderChoices(ev){
+  document.getElementById('choicePmt').textContent=ev.prompt;
+  const grid=document.getElementById('cgrid'); grid.innerHTML='';
+  ev.choices.forEach(c=>{
+    const b=document.createElement('button');
+    b.className=`cbtn2 ${c.t}`;
+    b.innerHTML=`<span class="ctag">${c.l}</span><span class="ctxt">${c.txt}</span>`;
+    b.onclick=()=>makeChoice(ev,c);
+    grid.appendChild(b);
+  });
+}
+
+function makeChoice(ev,c){
+  document.querySelectorAll('.cbtn2').forEach(b=>b.disabled=true);
+  const log=document.getElementById('dlog');
+  const m=document.createElement('div'); m.className='msg player';
+  m.innerHTML=`<div class="msg-sender">${G.vulgo}</div><div class="msg-bubble">${c.txt}</div>`;
+  log.appendChild(m); log.scrollTop=log.scrollHeight;
+  applyFx(c.fx,c.spec);
+  setTimeout(()=>{
+    addMsg('narrator',null,c.res,c.fx);
+    setTimeout(()=>{
+      addMsg('allied','TENENTE DITO',c.dito);
+      document.getElementById('qDito').textContent=c.dito;
+    },900);
+    setTimeout(()=>{
+      addMsg('allied','TENENTE NEGUINHO',c.neg);
+      document.getElementById('qNeg').textContent=c.neg;
+    },1800);
+    document.getElementById('newsText').textContent=c.news;
+    addChronicle(ev,c);
+    renderHUD(); renderSidebar();
+    if(checkGameOver()) return;
+    eventIdx++; save();
+    setTimeout(()=>checkRandEvent(()=>loadEvent(eventIdx)),3000);
+  },600);
+}
+
+// ═══ APPLY FX ═══
+function applyFx(fx,spec){
+  if(!fx)return;
+  const hm=G.heatMult||1;
+  const nightMult=cycle==='noite'?2:1;
+  if(fx.heat!=null) G.heat=clamp(G.heat+(fx.heat*hm*nightMult),0,100);
+  if(fx.resp!=null) G.resp=clamp(G.resp+fx.resp,0,100);
+  if(fx.temor!=null) G.temor=clamp(G.temor+fx.temor,0,100);
+  if(fx.sold!=null) G.sold=clamp(G.sold+fx.sold,0,50);
+  if(fx.sujo!=null) G.sujo=Math.max(0,G.sujo+fx.sujo);
+  if(fx.limpo!=null) G.limpo=Math.max(0,G.limpo+fx.limpo);
+  if(spec&&specPoints[spec]!=null) specPoints[spec]=Math.min(10,specPoints[spec]+1);
+  G.spec=specPoints;
+  if(G.heat>70){ const a7=G.rivals.find(r=>r.id==='alianca7'); if(a7&&a7.status!=='guerra') a7.status='guerra'; }
+  if(G.heat<30){ const a7=G.rivals.find(r=>r.id==='alianca7'); if(a7&&a7.status==='guerra') a7.status='paz'; }
+}
+
+function clamp(v,mn,mx){ return Math.min(mx,Math.max(mn,v)); }
+
+// ═══ GAME OVER ═══
+function checkGameOver(){
+  if(G.heat>=100){ gameOver('INTERVENÇÃO FEDERAL','Heat atingiu 100%. As forças federais cercaram o território. Toda a operação foi desmontada.'); return true; }
+  if(G.sold<=0){ gameOver('SEM TROPA','Todos os seus soldados foram perdidos. A organização se dissolveu por dentro.'); return true; }
+  if(G.resp<=0&&eventIdx>3){ gameOver('GOLPE INTERNO','Seu Respeito chegou a zero. Os Tenentes organizaram um golpe. Você foi deposto pela própria cúpula.'); return true; }
+  return false;
+}
+function gameOver(t,b){ document.getElementById('goTitle').textContent=t; document.getElementById('goBody').textContent=b; openModal('mGameOver'); localStorage.removeItem(SAVE_KEY2); }
+
+// ═══ CHRONICLE ═══
+function addChronicle(ev,c){
+  const ts=`CAP.${ev.chapterNum} — ${ev.loc}`;
+  const entry=`${c.l}: ${c.res.substring(0,120)}...`;
+  G.chronicle=G.chronicle||[];
+  G.chronicle.push({
+    ts,
+    entry,
+    loc: `Cap. ${ev.chapterNum} · ${ev.loc}`,
+    choice: c.l,
+    result: c.res.substring(0,160),
+    tag: c.tag||ev.tag||'ca'
+  });
+  const el=document.getElementById('chronicle');
+  const d=document.createElement('div'); d.className='chronicle-entry';
+  d.innerHTML=`<div class="chronicle-ts">${ts}</div>${entry}`;
+  el.insertBefore(d,el.firstChild);
+}
+
+// ═══ LAVAGEM ═══
+function lavarDinheiro(valor){
+  if(G.sujo<valor){ addMsg('system',null,'⚠ Saldo insuficiente em Dinheiro Sujo.'); closeModal('mLavagem'); return; }
+  const taxa=0.3;
+  const liquido=Math.round(valor*(1-taxa));
+  G.sujo-=valor; G.limpo+=liquido; G.heat=clamp(G.heat-5,0,100); G.fachadas=(G.fachadas||0)+1;
+  renderHUD();
+  closeModal('mLavagem');
+  addMsg('system',null,`◈ LAVAGEM CONCLUÍDA: ${fmt(valor)} Sujo → ${fmt(liquido)} Limpo (taxa 30%). Empresa de fachada registrada.`);
+  save();
+}
+
+// ═══ END GAME ═══
+// ─── RANK ENGINE ─────────────────────────────────────────────────────────────
+function calcRank(g){
+  const score = (g.resp*2) + (g.temor*1.2) + Math.floor(g.limpo/4000) + (g.sold*3) - (g.heat*0.8);
+  if(score>=420) return {title:'LENDA DO DOMÍNIO',  sub:'Ninguém apaga esse nome das ruas.',   score};
+  if(score>=320) return {title:'O INTOCÁVEL',        sub:'O sistema não conseguiu te alcançar.',  score};
+  if(score>=230) return {title:'DONO DO SETOR',      sub:'O território obedece sem questionar.',  score};
+  if(score>=150) return {title:'TENENTE DA ZONA',    sub:'Os menores te olham com admiração.',    score};
+  if(score>=80)  return {title:'GERENTE DO BECO',    sub:'Ainda tem muito asfalto pra percorrer.',score};
+                 return {title:'SOLDADO DE RUA',      sub:'Começou de baixo. Sempre há recomeço.', score};
+}
+
+// ─── LEGACY SCREEN ────────────────────────────────────────────────────────────
+function showLegacyScreen(){
+  // calculate rank
+  const rank = calcRank(G);
+  const specDom = Object.entries(specPoints).sort((a,b)=>b[1]-a[1])[0];
+  const specLabel = {dip:'Diplomata',san:'Sanguinário',str:'Estrategista'}[specDom[0]];
+  const dominantStyle = G.temor>G.resp ? 'Pelo Temor' : G.resp>G.temor ? 'Pelo Respeito' : 'Na Sombra';
+
+  // faction + region origin labels
+  const factionNames={faccao:'Facção',mafia:'Máfia',cartel:'Cartel',milicia:'Milícia'};
+  const regionNames ={norte:'Zona Norte',centro:'Centro',fronteira:'Fronteira'};
+  const fName = factionNames[G.faction]||G.faction||'—';
+  const rName = regionNames[G.region]||G.region||'—';
+
+  // choice type labels for dot color
+  const dotClass={ag:'ag',dp:'dp',es:'es',ca:'ca'};
+
+  // build HTML
+  const wrap = document.getElementById('legacyScroll');
+  wrap.innerHTML='';
+
+  let html='';
+
+  // ── RANK ──
+  html+=`<div class="legacy-rank">
+    <div class="legacy-rank-label">◈ Classificação Final</div>
+    <div class="legacy-rank-title">${rank.title}</div>
+    <div class="legacy-rank-sub">${rank.sub}</div>
+    <div class="legacy-line"></div>
+    <div class="legacy-rank-sub">${dominantStyle} · ${specLabel}</div>
+  </div>`;
+
+  // ── STATS ──
+  html+=`<div class="legacy-stats">
+    <div class="lstat">
+      <div class="lstat-lbl">Respeito</div>
+      <div class="lstat-val gold">${G.resp}</div>
+    </div>
+    <div class="lstat">
+      <div class="lstat-lbl">Temor</div>
+      <div class="lstat-val crim">${G.temor}</div>
+    </div>
+    <div class="lstat">
+      <div class="lstat-lbl">Heat</div>
+      <div class="lstat-val purp">${G.heat}%</div>
+    </div>
+    <div class="lstat">
+      <div class="lstat-lbl">Soldados</div>
+      <div class="lstat-val grn">${G.sold}</div>
+    </div>
+    <div class="lstat">
+      <div class="lstat-lbl">Capital Limpo</div>
+      <div class="lstat-val gold">${fmt(G.limpo)}</div>
+    </div>
+    <div class="lstat">
+      <div class="lstat-lbl">Score</div>
+      <div class="lstat-val grey">${rank.score}</div>
+    </div>
+  </div>`;
+
+  // ── ORIGIN ──
+  html+=`<div class="legacy-origin">
+    <div class="legacy-origin-tag">◈ Origem</div>
+    <div class="legacy-origin-txt">
+      ${G.vulgo} entrou pelas ruas da ${rName},<br>
+      jurando lealdade à ${fName}.<br>
+      O que era sede de poder virou legado de asfalto.
+    </div>
+  </div>
+  <div class="legacy-line"></div>`;
+
+  // ── TIMELINE ──
+  if(G.chronicle && G.chronicle.length>0){
+    html+=`<div class="legacy-sec" style="margin-top:48px;">◈ Crônicas do Domínio ◈</div>
+    <div class="legacy-timeline">`;
+    G.chronicle.forEach((entry,i)=>{
+      const dc = dotClass[entry.tag]||'ca';
+      const isLast = i===G.chronicle.length-1;
+      html+=`<div class="ltitem">
+        <div class="ltitem-left">
+          <div class="ltdot ${dc}"></div>
+          ${isLast?'':'<div class="ltline"></div>'}
+        </div>
+        <div class="ltitem-right">
+          <div class="ltitem-loc">${entry.loc||'—'}</div>
+          <div class="ltitem-choice">${entry.choice||''}</div>
+          <div class="ltitem-res">${entry.result||''}</div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // ── FINAL MESSAGE ──
+  html+=`<div class="legacy-line"></div>
+  <div class="legacy-final" style="margin-top:56px;">
+    <div class="legacy-final-txt">
+      As ruas não esquecem. Os nomes que subiram no crime
+      da ${rName} ficam gravados no asfalto — em sangue, em ouro, em silêncio.
+    </div>
+    <div class="legacy-final-name">${G.vulgo}</div>
+    <div class="legacy-final-score">Score final · ${rank.score} pts</div>
+  </div>
+  <div class="legacy-line"></div>
+  <button class="legacy-newgame" onclick="startNewFromLegacy()">
+    ► NOVA OPERAÇÃO
+  </button>`;
+
+  wrap.innerHTML=html;
+
+  // show screen first (so we can measure height)
+  showScreen('s-legacy');
+
+  // start rolling after a beat
+  setTimeout(()=>{
+    const contentH = wrap.scrollHeight;
+    const vpH     = window.innerHeight;
+    const dist     = -(contentH - vpH + 200);
+    const dur      = Math.max(30, contentH * 0.028); // ~28ms per px → smooth
+    wrap.style.setProperty('--scroll-dist', dist+'px');
+    wrap.style.setProperty('--scroll-dur',  dur+'s');
+    wrap.classList.add('rolling');
+  }, 1200);
+}
+
+function startNewFromLegacy(){
+  localStorage.removeItem(SAVE_KEY2);
+  location.reload();
+}
+
+function endGame(){
+  addSep(true);
+  updateSceneImage('');
+  save();
+  // brief message then fade to legacy screen
+  addMsg('narrator',null,`<em style="color:var(--gold-dim)">Capítulo III concluído. O Domínio está gravado nas ruas.</em>`);
+  document.getElementById('choicePmt').textContent='// FIM DA OPERAÇÃO';
+  document.getElementById('cgrid').innerHTML='';
+  setTimeout(showLegacyScreen, 3200);
+}
+
+// ═══════════════════════════════════════════════════
+//  SISTEMA DE EVENTOS ALEATÓRIOS
+// ═══════════════════════════════════════════════════
+
+// Cada evento tem: condição de disparo, chance (0-1), tag, título, texto, escolhas
+const RAND_EVENTS = [
+  {
+    id:'blitz',
+    tag:'⚠ OPERAÇÃO POLICIAL',
+    title:'BLITZ SURPRESA',
+    body:'Um helicóptero apareceu sem aviso. A PM montou blitz na entrada principal do seu território. Dois soldados estão presos no meio.',
+    img:'caveirao.jpg',
+    cond: ()=> G.heat>=35,
+    chance: 0.45,
+    choices:[
+      { label:'[DESVIO]', txt:'Manda os dois pela saída alternativa. Perde tempo, mas sai limpo.',
+        tag:'es', fx:{heat:-8, sujo:-2000},
+        res:'Os dois saem pela rota dos fundos. A blitz não encontra nada relevante. Custo operacional absorvido.' },
+      { label:'[SUBORNO]', txt:'Manda envelope pro sargento da blitz.',
+        tag:'dp', fx:{heat:-15, sujo:-6000},
+        res:'O sargento olha pro envelope, coloca no bolso e sinaliza pro pessoal liberar. Canal aberto para uso futuro.' },
+      { label:'[SACRIFÍCIO]', txt:'Os dois são descartáveis. Segue o fluxo normal.',
+        tag:'ag', fx:{heat:5, sold:-2, resp:-8},
+        res:'Os dois são fichados. A operação continua — mas a tropa viu que o chefe não hesitou em deixar os menores pra trás.' }
+    ]
+  },
+  {
+    id:'traicao',
+    tag:'🔴 ALERTA INTERNO',
+    title:'TRAIÇÃO DETECTADA',
+    body:'Dito descobriu que um dos soldados do nível 2 estava repassando informação de rota para uma facção rival. Ele está esperando sua decisão.',
+    img:'',
+    cond: ()=> G.sold>=4,
+    chance: 0.35,
+    choices:[
+      { label:'[ELIMINAR]', txt:'Sem julgamento. O código é claro.',
+        tag:'ag', fx:{heat:8, temor:18, sold:-1, resp:5},
+        res:'A decisão é veloz e definitiva. A tropa não discute. Ninguém faz mais pergunta sobre lealdade por semanas.' },
+      { label:'[INTERROGAR]', txt:'Quer saber quem mais está comprometido antes de agir.',
+        tag:'es', fx:{heat:3, resp:12, temor:8},
+        res:'Três dias de pressão revelam mais dois nomes. Você age com evidência completa. A purga é cirúrgica.' },
+      { label:'[SOLTAR COM RECADO]', txt:'Devolve ele pra facção rival com uma mensagem gravada no corpo.',
+        tag:'ag', fx:{heat:15, temor:25, sold:-1, resp:8},
+        res:'O X-9 volta pra base dele com cicatriz e mensagem. A facção rival recua por duas semanas.' }
+    ]
+  },
+  {
+    id:'oportunidade',
+    tag:'💰 OPORTUNIDADE',
+    title:'CARGA ABANDONADA',
+    body:'Um caminhão foi abandonado a 3 quilômetros do seu território. Neguinho confirmou: carga valiosa, sem dono aparente. Pode ser armadilha — ou pode ser sorte.',
+    img:'arsenal.jpg',
+    cond: ()=> true,
+    chance: 0.38,
+    choices:[
+      { label:'[PEGA TUDO]', txt:'Manda o bonde buscar agora. Risco e tudo.',
+        tag:'ag', fx:{heat:20, sujo:18000, resp:5},
+        res:'O bonde volta com a carga inteira. Era produto de uma rota interditada pela PM — sem dono ativo. Dinheiro sujo na conta.' },
+      { label:'[INVESTIGA PRIMEIRO]', txt:'Manda olheiro antes. Melhor saber com quem está lidando.',
+        tag:'es', fx:{heat:5, sujo:8000, resp:10},
+        res:'O olheiro confirma: carga real, sem rastreador. Você pega metade com calma. Risco zero, lucro parcial.' },
+      { label:'[IGNORA]', txt:'Pode ser armadilha do Estado. Não vale o risco.',
+        tag:'ca', fx:{heat:-5},
+        res:'Você passa longe. Dois dias depois, outro grupo pega a carga — sem consequência aparente. Talvez fosse real. Talvez não.' }
+    ]
+  },
+  {
+    id:'policiamento',
+    tag:'📻 PRESSÃO DO ESTADO',
+    title:'DELEGADO NA MÍDIA',
+    body:'O delegado da área deu entrevista anunciando "operação especial contra o crime organizado" com seu setor como alvo principal. A tropa está nervosa.',
+    img:'caveirao.jpg',
+    cond: ()=> G.heat>=50,
+    chance: 0.5,
+    choices:[
+      { label:'[PRESSÃO POLÍTICA]', txt:'Aciona seus contatos para neutralizar o delegado antes que a operação saia do papel.',
+        tag:'dp', fx:{heat:-20, sujo:-10000, limpo:-5000, resp:8},
+        res:'O delegado é silenciado por pressão interna. A operação é suspensa antes de começar. Custo alto, eficiência total.' },
+      { label:'[MOVIMENTO PREVENTIVO]', txt:'Desmonta todas as operações visíveis por 72 horas. Zero exposição.',
+        tag:'es', fx:{heat:-18, sujo:-5000},
+        res:'72 horas de silêncio total. O delegado anuncia operação, não encontra nada relevante, perde credibilidade na imprensa.' },
+      { label:'[IGNORA E CONTINUA]', txt:'Blefe de delegado não muda o plano. Segue operando.',
+        tag:'ag', fx:{heat:15, resp:10, temor:5},
+        res:'A operação acontece — mas menor do que o anunciado. Você absorveu o golpe, a tropa viu que o chefe não recua com papo.' }
+    ]
+  },
+  {
+    id:'recrutamento_elite',
+    tag:'🟢 OPORTUNIDADE DE RECRUTAMENTO',
+    title:'OPERADOR ESPECIAL DISPONÍVEL',
+    body:'Um ex-militar com ficha impecável — e motivações obscuras — bateu na porta. Neguinho diz que o cara sabe coisas que os seus soldados nunca vão saber. Mas por que ele veio até você?',
+    img:'',
+    cond: ()=> G.resp>=25,
+    chance: 0.32,
+    choices:[
+      { label:'[RECRUTAR]', txt:'Testa por uma semana e decide depois.',
+        tag:'dp', fx:{heat:3, resp:5, temor:10, sold:1, sujo:-8000},
+        res:'Uma semana de observação revela competência real. O ex-militar entra — e imediatamente melhora o nível tático da tropa.' },
+      { label:'[INTERROGAR FUNDO]', txt:'Quer saber exatamente por que ele veio. Nada é de graça.',
+        tag:'es', fx:{heat:0, resp:12, sold:1},
+        res:'O interrogatório revela: ele está fugindo de uma dívida com o Sindicato. Você negocia a dívida como alavancagem. Ele entra comprometido.' },
+      { label:'[RECUSAR]', txt:'Desconhecido na porta é risco demais.',
+        tag:'ca', fx:{heat:-3, resp:-5},
+        res:'Você recusa. Ele some tão rápido quanto apareceu. Dito diz que provavelmente era teste de uma facção rival.' }
+    ]
+  },
+  {
+    id:'lavagem_emergencia',
+    tag:'💸 ALERTA FINANCEIRO',
+    title:'RASTRO NO EXTRATO',
+    body:'A Receita Federal cruzou dados e identificou movimentação atípica em duas das suas contas de fachada. Você tem 48 horas para agir antes do bloqueio.',
+    img:'',
+    cond: ()=> G.limpo>=8000,
+    chance: 0.3,
+    choices:[
+      { label:'[TRANSFERÊNCIA RÁPIDA]', txt:'Move tudo para contas internacionais agora. Perde 20% na velocidade.',
+        tag:'es', fx:{heat:-10, limpo: -Math.round((G.limpo||0)*0.2)},
+        res:'Em 36 horas, o capital está em três jurisdições diferentes. A Receita bloqueia contas vazias.' },
+      { label:'[ADVOGADO CORRUPTO]', txt:'Aciona o jurídico para contestar o bloqueio enquanto move o dinheiro.',
+        tag:'dp', fx:{heat:-15, sujo:-12000, limpo: Math.round((G.limpo||0)*0.05)},
+        res:'O advogado compra 10 dias de contestação. O capital some durante o processo. O bloqueio chega em cima de zero.' },
+      { label:'[ACEITA A PERDA]', txt:'Sacrifica essas contas. O prejuízo é controlado.',
+        tag:'ca', fx:{heat:-20, limpo: -Math.round((G.limpo||0)*0.35)},
+        res:'As contas são bloqueadas com parte do capital dentro. Prejuízo real — mas a estrutura principal sobreviveu intocada.' }
+    ]
+  },
+  {
+    id:'rival_proposta',
+    tag:'🤝 CONTATO EXTERNO',
+    title:'MENSAGEM DO SINDICATO',
+    body:'O Sindicato da Sombra mandou mensagem direta: querem comprar uma das suas rotas. Oferta generosa — mas vender rota é ceder território.',
+    img:'',
+    cond: ()=> G.resp>=20,
+    chance: 0.33,
+    choices:[
+      { label:'[VENDE A ROTA]', txt:'A oferta é boa. Capital imediato vale a concessão.',
+        tag:'dp', fx:{heat:-10, sujo:25000, resp:-5, temor:-8},
+        res:'O Sindicato paga pontualmente. A rota muda de mãos sem ruído. Você capitalizou — mas cedeu espaço estratégico.' },
+      { label:'[NEGOCIA PARCERIA]', txt:'Não vende. Propõe co-gestão com divisão de lucro.',
+        tag:'es', fx:{heat:-5, sujo:12000, resp:15},
+        res:'O Sindicato aceita, relutante. A parceria gera menos caixa imediato mas mantém o controle da rota e adiciona um aliado.' },
+      { label:'[RECUSA SECO]', txt:'Nenhuma rota está à venda. Que procurem outro.',
+        tag:'ag', fx:{heat:5, temor:15, resp:10},
+        res:'O Sindicato não gostou da recusa — mas respeitou. Nas ruas, a notícia de que você disse não ao Sindicato aumenta seu status.' }
+    ]
+  }
+];
+
+let lastRandEventId = null;
+
+function checkRandEvent(onDone){
+  // 40% de chance de disparar um evento entre missões (não no início)
+  if(eventIdx < 1 || Math.random() > 0.42){ onDone(); return; }
+  const eligible = RAND_EVENTS.filter(e =>
+    e.id !== lastRandEventId &&
+    e.cond() &&
+    Math.random() < e.chance
+  );
+  if(eligible.length === 0){ onDone(); return; }
+  const ev = eligible[Math.floor(Math.random()*eligible.length)];
+  lastRandEventId = ev.id;
+  showRandEvent(ev, onDone);
+}
+
+function showRandEvent(ev, onDone){
+  document.getElementById('rEvTag').textContent = ev.tag;
+  document.getElementById('rEvTitle').textContent = ev.title;
+  document.getElementById('rEvBody').textContent = ev.body;
+  const container = document.getElementById('rEvChoices');
+  container.innerHTML = '';
+  ev.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = `cbtn2 ${c.tag||'ca'}`;
+    btn.style.cssText = 'width:100%;text-align:left;';
+    btn.innerHTML = `<span class="ctag">${c.label}</span><span class="ctxt">${c.txt}</span>`;
+    btn.onclick = () => {
+      closeModal('mRandEvent');
+      // Calcular efeitos dinâmicos (limpo pode depender de G.limpo atual)
+      const fx = typeof c.fx === 'function' ? c.fx() : { ...c.fx };
+      applyFx(fx, null);
+      renderHUD(); renderSidebar();
+      addSep();
+      addMsg('system', '⚡ EVENTO', `${ev.title} — ${c.label}`);
+      addMsg('narrator', null, c.res, fx);
+      save();
+      setTimeout(onDone, 1800);
+    };
+    container.appendChild(btn);
+  });
+  openModal('mRandEvent');
+}
+
+// ═══════════════════════════════════════════════════
+//  SISTEMA DE ÁUDIO — Web Audio API Synthesis
+// ═══════════════════════════════════════════════════
+
+const AC = window.AudioContext || window.webkitAudioContext;
+let ctx = null;
+let isMuted = false;
+let rainGain = null, rainSrc = null;
+let radioGain = null, radioSrc = null, radioActive = false;
+let audioReady = false;
+
+function initAudio(){
+  if(audioReady) return;
+  try{
+    ctx = new AC();
+    buildRain();
+    audioReady = true;
+  }catch(e){ console.warn('Web Audio API não disponível.',e); }
+}
+
+// ── CHUVA (Brown Noise + Low-pass) ──
+function buildRain(){
+  if(!ctx) return;
+  const rate = ctx.sampleRate;
+  const secs = 8;
+  const buf = ctx.createBuffer(2, rate*secs, rate);
+  for(let ch=0;ch<2;ch++){
+    const d = buf.getChannelData(ch);
+    let last = 0;
+    for(let i=0;i<d.length;i++){
+      const w = (Math.random()*2-1);
+      d[i] = (last+(0.018*w))/1.018;
+      last = d[i];
+      d[i] *= 4;
+    }
+  }
+  rainSrc = ctx.createBufferSource();
+  rainSrc.buffer = buf;
+  rainSrc.loop = true;
+
+  // Low-pass para som de chuva
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 700;
+  lp.Q.value = 0.5;
+
+  // High-pass para retirar sub-bass
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 80;
+
+  rainGain = ctx.createGain();
+  rainGain.gain.value = isMuted ? 0 : 0.28;
+
+  rainSrc.connect(hp);
+  hp.connect(lp);
+  lp.connect(rainGain);
+  rainGain.connect(ctx.destination);
+  rainSrc.start();
+}
+
+// ── CLIQUE METÁLICO (botão) ──
+function sndClick(){
+  if(!ctx||isMuted) return;
+  const t = ctx.currentTime;
+  // Ruído filtrado para "tick" metálico
+  const buf = ctx.createBuffer(1, ctx.sampleRate*0.08, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 3200;
+  bp.Q.value = 8;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.22, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t+0.07);
+  src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+  src.start(t); src.stop(t+0.08);
+}
+
+// ── TECLA DE MÁQUINA DE ESCREVER ──
+function sndType(){
+  if(!ctx||isMuted) return;
+  const t = ctx.currentTime;
+  const buf = ctx.createBuffer(1, ctx.sampleRate*0.05, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 1800 + Math.random()*600;
+  bp.Q.value = 4;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.12, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t+0.045);
+  src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+  src.start(t); src.stop(t+0.05);
+}
+
+// ── RÁDIO POLICIAL (Band-pass Noise) ──
+function buildRadio(){
+  if(!ctx||radioActive) return;
+  const rate = ctx.sampleRate;
+  const secs = 4;
+  const buf = ctx.createBuffer(1, rate*secs, rate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1);
+
+  radioSrc = ctx.createBufferSource();
+  radioSrc.buffer = buf;
+  radioSrc.loop = true;
+
+  // Filtro band-pass para textura de rádio
+  const bp1 = ctx.createBiquadFilter();
+  bp1.type = 'bandpass';
+  bp1.frequency.value = 1400;
+  bp1.Q.value = 1.2;
+
+  const bp2 = ctx.createBiquadFilter();
+  bp2.type = 'bandpass';
+  bp2.frequency.value = 2800;
+  bp2.Q.value = 2;
+
+  // Distorção leve via WaveShaper
+  const ws = ctx.createWaveShaper();
+  const curve = new Float32Array(256);
+  for(let i=0;i<256;i++){ const x=i*2/256-1; curve[i]=Math.tanh(x*3); }
+  ws.curve = curve;
+
+  radioGain = ctx.createGain();
+  radioGain.gain.value = isMuted ? 0 : 0.14;
+
+  radioSrc.connect(bp1); bp1.connect(bp2); bp2.connect(ws); ws.connect(radioGain);
+  radioGain.connect(ctx.destination);
+  radioSrc.start();
+  radioActive = true;
+}
+
+function stopRadio(){
+  if(!radioActive) return;
+  try{ radioSrc.stop(); }catch(e){}
+  radioActive = false;
+  radioSrc = null;
+  radioGain = null;
+}
+
+// ── CONTROLE DE RÁDIO por HEAT ──
+function updateRadioByHeat(heat){
+  if(!audioReady) return;
+  const el = document.getElementById('radioAlert');
+  if(heat >= 60){
+    if(!radioActive) buildRadio();
+    if(radioGain && !isMuted) radioGain.gain.setTargetAtTime(0.14, ctx.currentTime, 0.3);
+    if(el) el.style.display = 'block';
+  } else {
+    if(radioActive){
+      if(radioGain) radioGain.gain.setTargetAtTime(0, ctx.currentTime, 0.5);
+      setTimeout(stopRadio, 800);
+    }
+    if(el) el.style.display = 'none';
+  }
+}
+
+// ── MUDO ──
+function toggleMute(){
+  initAudio();
+  isMuted = !isMuted;
+  const btn = document.getElementById('muteBtn');
+  const icon = document.getElementById('muteIcon');
+  const lbl = document.getElementById('muteLbl');
+  if(isMuted){
+    btn.classList.add('muted');
+    icon.textContent = '🔇';
+    lbl.textContent = 'MUDO';
+    if(rainGain) rainGain.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+    if(radioGain) radioGain.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+  } else {
+    btn.classList.remove('muted');
+    icon.textContent = '🔊';
+    lbl.textContent = 'SOM';
+    if(rainGain) rainGain.gain.setTargetAtTime(0.28, ctx.currentTime, 0.3);
+    if(radioActive && radioGain) radioGain.gain.setTargetAtTime(0.14, ctx.currentTime, 0.3);
+    if(ctx && ctx.state === 'suspended') ctx.resume();
+  }
+}
+
+// ── Hook: ativar áudio na primeira interação do usuário ──
+function _ensureAudio(){
+  initAudio();
+  if(ctx && ctx.state === 'suspended') ctx.resume();
+}
+document.addEventListener('click', _ensureAudio, { once: true });
+document.addEventListener('keydown', _ensureAudio, { once: true });
+
+// ── Injetar sndClick em todos os botões ──
+document.addEventListener('click', function(e){
+  const tgt = e.target.closest('button,.mbtn,.cbtn2,.mbt,.ocard,.rcard,.fcard');
+  if(tgt) sndClick();
+}, true);
+
+// ═══ Patch renderHUD para controlar rádio por heat ═══
+const _origRenderHUD = renderHUD;
+renderHUD = function(){
+  _origRenderHUD();
+  updateRadioByHeat(G.heat||0);
+};
+
+// ─── SPLASH ───
+(function initSplash(){
+  const splash = document.getElementById('splash');
+  const bar    = document.getElementById('splashBar');
+  let pct = 0;
+  const tick = setInterval(()=>{
+    pct += Math.random()*18 + 4;
+    if(pct>100) pct=100;
+    bar.style.width = pct+'%';
+    if(pct>=100){
+      clearInterval(tick);
+      setTimeout(()=>{
+        splash.classList.add('hidden');
+        setTimeout(()=>{ splash.style.display='none'; }, 850);
+      }, 350);
+    }
+  }, 120);
+})();
+
+// ─── INIT ───
+checkSave();
+</script>
+</body>
+</html>
